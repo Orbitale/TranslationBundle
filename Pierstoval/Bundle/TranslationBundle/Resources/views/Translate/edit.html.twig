@@ -1,0 +1,77 @@
+{% extends "PierstovalAdminBundle:Admin:layout.html.twig" %}
+
+{% block title %}{{ 'Mise à jour des traductions' | trans }}{% endblock %}
+
+
+
+{% block admin_content %}
+
+<ol class="breadcrumb">
+    <li><a href="{{ url('pierstoval_admin_admin_index') }}">{{ 'Accueil' | trans }}</a></li>
+    <li><a href="{{ url('pierstoval_translation_translate_adminlist') }}">{{ 'Traductions' | trans }}</a></li>
+</ol>
+
+<h1>{{ 'Traduction des messages' | trans }}</h1>
+
+<h4>{{ 'Domaine de traduction' | trans }} : {{ domain }}</h4>
+<h4>{{ 'Langue' | trans }} : {{ lang.name | trans }}</h4>
+
+<form name="translate_update" id="translate_update" action="{{ url('pierstoval_translation_translate_edit', {'domain':domain,'locale':lang.locale}) }}" method="post">
+    <fieldset>
+        {#
+        <div class="alert alert-info" id="always_save_indicator">
+            <label class="col-lg-4">
+                {{ 'Mise à jour automatique des traductions' | trans }}
+                <input type="checkbox" id="always_save" checked />
+            </label>
+            <div class="clearfix"></div>
+            <a class="btn btn-sm alert-link btn-link" href="{{ url('pierstoval_translation_translate_adminlist') }}">&laquo; {{ 'Retour à la liste des traductions' | trans }}</a>
+        </div>
+        #}
+        <hr />
+		<div class="row">
+            <div class="form-group col-lg-5">
+				<h4>{{ 'Message original' | trans }}</h4>
+            </div>
+            <div class="form-group col-lg-5">
+				<h4>{{ 'Traduction du message' | trans }}</h4>
+            </div>
+            <div class="btn-group col-lg-2">
+				<h4>{{ 'Actions' | trans }}</h4>
+            </div>
+		</div>
+        {% for item, translation in translations %}
+        <div class="row">
+            <div class="form-group col-lg-5">
+                <label class="control-label" data-token="{{ translation.token }}" for="translation{{ translation.token }}">{{ translation.source }}</label>
+            </div>
+            <div class="form-group col-lg-5">
+                <textarea data-modified="false" name="translation[{{ translation.token }}]" id="translation_{{ translation.token }}" class="form-control translation_text" placeholder="{{ 'Écrivez ici la traduction du texte ci-contre' | trans }}">{{ translation.translation | raw }}</textarea>
+            </div>
+            <div class="col-lg-2">
+                <button class="btn btn-default btn-sm validate_translation" type="button" data-target-item="translation_{{ translation.token }}">{{ 'Sauvegarder' | trans }}</button>
+                <button class="btn btn-default btn-sm recopy_message" type="button" data-target-item="translation_{{ translation.token }}">{{ 'Recopier le message d\'origine' | trans }}</button>
+                {#<button class="btn btn-default btn-sm check_translations" type="button" data-target-item="translation_{{ translation.token }}">{{ 'Voir les autres traductions' | trans }}</button>#}
+            </div>
+        </div>
+        {% else %}
+            <div class="alert alert-danger">
+                <h3>{{ 'Aucune traduction n\'a été trouvée !' | trans }}</h3>
+            </div>
+        {% endfor %}
+    </fieldset>
+</form>
+{% endblock %}
+
+
+{% block javascripts %}
+    {{ parent() }}
+    <script type="text/javascript">
+            var message_replace_content = '{{ 'Remplacer le contenu ?' | trans({}, 'admin.translation') }}';
+    </script>
+    {% javascripts
+        '@PierstovalTranslationBundle/Resources/public/js/translation.js'
+        filter="?yui_js"
+        output="js/translation.js"
+    %}<script type="text/javascript" src="{{ app.request.getSchemeAndHttpHost() ~ asset_url }}"></script>{% endjavascripts %}
+{% endblock %}
