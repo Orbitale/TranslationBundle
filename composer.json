@@ -1,5 +1,5 @@
 {
-    "name": "pierstoval/translate-bundle",
+    "name": "pierstoval/translation-bundle",
     "description": "Adds database management for Symfony2's native translator, a db to files translations extractor, a translation catcher whenever id or source is not found, and a translation UI to manage it.",
     "keywords": ["translate", "trans", "internationalization","translation","symfony2"],
     "homepage": "https://github.com/Pierstoval/TranslationBundle/",
