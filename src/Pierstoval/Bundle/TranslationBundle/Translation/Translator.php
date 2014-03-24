@@ -5,11 +5,13 @@ namespace Pierstoval\Bundle\TranslationBundle\Translation;
 use Pierstoval\Bundle\TranslationBundle\Entity\Translation as Translation;
 
 use Symfony\Bundle\FrameworkBundle\Translation\Translator as BaseTranslator;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\Translation\MessageSelector;
 use Symfony\Component\Translation\TranslatorInterface;
 
 /**
  * Class Translator
- * Project pierstoval
+ * Project Pierstoval
  *
  * @author Pierstoval
  * @version 1.0 08/01/2014
@@ -19,7 +21,7 @@ class Translator extends BaseTranslator implements TranslatorInterface {
     private static $catalogue = array();
     private static $temporary_domain = null;
 
-    function __construct(\Symfony\Component\DependencyInjection\ContainerInterface $container, \Symfony\Component\Translation\MessageSelector $selector, $loaderIds = array(), array $options = array()) {
+    function __construct(ContainerInterface $container, MessageSelector $selector, $loaderIds = array(), array $options = array()) {
         if ($container->isScopeActive('request')) {
             $locale = $container->get('session')->get('_locale');
             if (!$locale) { $locale = $container->getParameter('locale'); }

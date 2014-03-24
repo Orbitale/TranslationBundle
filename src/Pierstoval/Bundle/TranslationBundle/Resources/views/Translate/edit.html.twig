@@ -26,6 +26,7 @@
             {#<div class="clearfix"></div>#}
             <a class="btn btn-sm alert-link btn-link" href="{{ url('pierstoval_translation_translate_adminlist') }}">&laquo; {{ 'Retour à la liste des traductions' | trans }}</a>
             <input type="submit" class="btn btn-default" id="submit_updates" name="submit_updates" value="{{ 'Sauvegarder les modifications' | trans({}, 'admin.translation') }}" />
+            <a class="btn btn-sm btn-link" href="{{ url('pierstoval_translation_translate_export', {"locale": lang.locale}) }}">{{ 'Exporter les traductions de cette langue' | trans({}, 'admin.translation') }}</a>
         </div>
         <hr />
 		<div class="row">

@@ -2,6 +2,8 @@
 
 namespace Pierstoval\Bundle\TranslationBundle\Twig;
 
+use Symfony\Component\Translation\TranslatorInterface;
+
 /**
  * Class Translation
  * Project pierstoval
@@ -11,7 +13,7 @@ namespace Pierstoval\Bundle\TranslationBundle\Twig;
  */
 class TranslationExtension extends \Twig_Extension {
 
-    function __construct(\Symfony\Component\Translation\TranslatorInterface $translator) {
+    function __construct(TranslatorInterface $translator) {
         $this->translator = $translator;
     }
 

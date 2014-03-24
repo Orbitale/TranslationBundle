@@ -2,6 +2,14 @@
 
 {% block body %}
     <h1>{{ 'Traductions' | trans }}</h1>
+    {% for key, messageList in app.session.flashbag.all() %}
+        <div class="alert alert-{{ key }}">
+            {% for message in messageList %}
+                {{ message | trans({}, 'messages.flash') | raw }}
+            {% endfor %}
+        </div>
+    {% endfor %}
+    <a class="btn btn-sm btn-link" href="{{ url('pierstoval_translation_translate_export') }}">{{ 'Exporter toutes les traductions' | trans({}, 'admin.translation') }}</a>
     <div class="row">
         {% for locale,catalogue in translations %}
             <div class="col-lg-3">

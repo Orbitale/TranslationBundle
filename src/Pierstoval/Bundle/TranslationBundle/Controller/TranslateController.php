@@ -62,6 +62,39 @@ class TranslateController extends Controller {
     }
 
     /**
+     * @Route("/admin/translations/export/{locale}")
+     * @Route("/admin/translations/export/")
+     */
+    public function exportAction($locale = null) {
+        $extractor = $this->container->get('pierstoval.translation.extractor');
+
+        $done = 'true';
+
+        $languages = null;
+        if (!$locale || $locale = 'all') {
+            $languages = $this->getDoctrine()->getManager()->getRepository('PierstovalTranslationBundle:Languages')->findAll();
+        }
+
+        if ($languages) {
+            foreach ($languages as $language) {
+                if (!$extractor->extract($language->getLocale())) {
+                    $done = 'false';
+                }
+            }
+        } else {
+            $done = $extractor->extract($locale) ? 'true' : 'false';
+        }
+
+        if ($done) {
+            $this->container->get('session')->getFlashBag()->add('success', 'Extraction des traductions effectuée !');
+            return $this->redirect($this->generateUrl('pierstoval_translation_translate_adminlist'));
+        } else {
+            $msg = $this->container->get('translator')->trans('Une erreur inconnue est survenue dans l\'extractions des traductions...', array(), 'admin.translation');
+            throw new \Exception($msg);
+        }
+    }
+
+    /**
      * @Route("/admin/translations/{locale}/{domain}")
      * @Template()
      */
