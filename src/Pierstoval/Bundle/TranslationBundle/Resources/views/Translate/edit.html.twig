@@ -1,33 +1,32 @@
-{% extends "PierstovalAdminBundle:Admin:layout.html.twig" %}
-
 {% block title %}{{ 'Mise à jour des traductions' | trans }}{% endblock %}
 
-
-
-{% block admin_content %}
-
-<ol class="breadcrumb">
-    <li><a href="{{ url('pierstoval_admin_admin_index') }}">{{ 'Accueil' | trans }}</a></li>
-    <li><a href="{{ url('pierstoval_translation_translate_adminlist') }}">{{ 'Traductions' | trans }}</a></li>
-</ol>
+{% block body %}
 
 <h1>{{ 'Traduction des messages' | trans }}</h1>
 
 <h4>{{ 'Domaine de traduction' | trans }} : {{ domain }}</h4>
 <h4>{{ 'Langue' | trans }} : {{ lang.name | trans }}</h4>
 
+
+{% if nb_translated is not null %}
+    {% if nb_translated %}
+        {{ 'Traductions enregistrées ! %count% modifications effectuées.' | trans({'%count%':nb_translated}) }}
+    {% else %}
+        {{ 'Aucun changement n\'a été fait.' | trans }}
+    {% endif %}
+{% endif %}
+
 <form name="translate_update" id="translate_update" action="{{ url('pierstoval_translation_translate_edit', {'domain':domain,'locale':lang.locale}) }}" method="post">
     <fieldset>
-        {#
         <div class="alert alert-info" id="always_save_indicator">
-            <label class="col-lg-4">
-                {{ 'Mise à jour automatique des traductions' | trans }}
-                <input type="checkbox" id="always_save" checked />
-            </label>
-            <div class="clearfix"></div>
+            {#<label class="col-lg-4">#}
+                {#{{ 'Mise à jour automatique des traductions' | trans }}#}
+                {#<input type="checkbox" id="always_save" checked />#}
+            {#</label>#}
+            {#<div class="clearfix"></div>#}
             <a class="btn btn-sm alert-link btn-link" href="{{ url('pierstoval_translation_translate_adminlist') }}">&laquo; {{ 'Retour à la liste des traductions' | trans }}</a>
+            <input type="submit" class="btn btn-default" id="submit_updates" name="submit_updates" value="{{ 'Sauvegarder les modifications' | trans({}, 'admin.translation') }}" />
         </div>
-        #}
         <hr />
 		<div class="row">
             <div class="form-group col-lg-5">
@@ -64,14 +63,10 @@
 {% endblock %}
 
 
-{% block javascripts %}
-    {{ parent() }}
+{% block translation_javascripts %}
+    {% if block('javascripts') is not empty %}{{ block('javascripts') | raw }}{% endif %}
     <script type="text/javascript">
-            var message_replace_content = '{{ 'Remplacer le contenu ?' | trans({}, 'admin.translation') }}';
+        var message_replace_content = '{{ 'Remplacer le contenu ?' | trans({}, 'admin.translation') }}';
     </script>
-    {% javascripts
-        '@PierstovalTranslationBundle/Resources/public/js/translation.js'
-        filter="?yui_js"
-        output="js/translation.js"
-    %}<script type="text/javascript" src="{{ app.request.getSchemeAndHttpHost() ~ asset_url }}"></script>{% endjavascripts %}
+    <script type="text/javascript" src="{{ app.request.getSchemeAndHttpHost() ~ asset('bundles/pierstovaltranslation/js/translation.js') }}"></script>
 {% endblock %}

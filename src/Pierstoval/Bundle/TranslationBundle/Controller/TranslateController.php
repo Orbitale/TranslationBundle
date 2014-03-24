@@ -56,6 +56,7 @@ class TranslateController extends Controller {
         ksort($translations);
 
         return array(
+            'layoutToExtend' => null,
             'translations'=>$translations,
         );
     }
@@ -66,35 +67,58 @@ class TranslateController extends Controller {
      */
     public function editAction(Request $request, $locale, $domain) {
 
-        if ($request->isXmlHttpRequest() && $request->isMethod('POST')) {
+        $em = $this->getDoctrine()->getManager();
+        $transRepo = $em->getRepository('PierstovalTranslationBundle:Translation');
+
+        $nb = null;
+        if ($request->isMethod('POST')) {
             $post = $request->request;
-            $token = $post->get('token');
-            $translation = $post->get('translation');
-            $check_translations = $post->get('check_translation');
-            if ($token && $translation && !$check_translations) {
-                return $this->_saveTranslation($token, $translation);
-            }
-        } else {
             if ($request->isXmlHttpRequest()) {
-                $this->get('session')->getFlashBag()->set('info', 'Mauvaise requête XHR.');
-            }
-            if ($request->isMethod('post')) {
-                $this->get('session')->getFlashBag()->set('info', 'Mauvaise requête Post.');
-            }
-            $translations = $this->getDoctrine()->getManager()
-                ->getRepository('PierstovalTranslationBundle:Translation')
-                ->findBy(array('locale'=>$locale,'domain'=>$domain));
+                $token = $post->get('token');
+                $translation = $post->get('translation');
+                $check_translations = $post->get('check_translation');
+                if ($token && $translation && !$check_translations) {
+                    return $this->_saveTranslation($token, $translation);
+                }
+            } else {
+                $tokens = $post->get('translation');
+                $keys = array_keys($tokens);
 
-            $lang = $this->getDoctrine()->getManager()
-                ->getRepository('PierstovalTranslationBundle:Languages')
-                ->findOneByLocale($locale);
+                $found = $transRepo->findByTokens($keys);
 
-            return array(
-                'translations' => $translations,
-                'lang' => $lang,
-                'domain' => $domain,
-            );
+                $nb = 0;
+                foreach ($found as $translation) {
+                    if (
+                        isset($tokens[$translation->getToken()])
+                        && $tokens[$translation->getToken()] !== $translation->getTranslation()
+                        && $tokens[$translation->getToken()]
+                    ) {
+                        $translation->setTranslation($tokens[$translation->getToken()]);
+                        $em->persist($translation);
+                        $nb++;
+                    }
+                }
+
+                if ($nb) {
+                    $em->flush();
+                }
+
+            }
         }
+        $translations = $transRepo->findBy(array('locale'=>$locale,'domain'=>$domain));
+
+        $lang = $em->getRepository('PierstovalTranslationBundle:Languages')->findOneByLocale($locale);
+
+        if (!$lang) {
+            throw $this->createNotFoundException('Language for locale "'.$locale.'" not found. Did you forget to use "pierstoval:translation:language-add" command ?');
+        }
+
+        return array(
+            'nb_translated' => $nb,
+            'translations' => $translations,
+            'lang' => $lang,
+            'domain' => $domain,
+        );
     }
 
     private function _saveTranslation($token, $translation) {
@@ -128,7 +152,7 @@ class TranslateController extends Controller {
             'message'=>$message,
             'translated'=>$translated,
             'translation'=>$translation
-        ), P_JSON_ENCODE));
+        )));
     }
 
 }

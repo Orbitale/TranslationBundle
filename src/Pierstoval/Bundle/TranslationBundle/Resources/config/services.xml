@@ -4,26 +4,22 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
-    <!--
+
     <parameters>
-        <parameter key="pierstoval_translate.example.class">Pierstoval\Bundle\TranslationBundle\Example</parameter>
+        <parameter key="pierstoval_translate.translator.class">Pierstoval\Bundle\TranslationBundle\Translation\Translator</parameter>
+        <parameter key="pierstoval_translate.translator.loader">Pierstoval\Bundle\TranslationBundle\Translation\TranslationLoader</parameter>
+
+        <!-- Overrides the Symfony2's translator -->
+        <parameter key="translator.class">%pierstoval_translate.translator.class%</parameter>
     </parameters>
 
-    <services>
-        <service id="pierstoval_translate.example" class="%pierstoval_translate.example.class%">
-            <argument type="service" id="service_id" />
-            <argument>plain_value</argument>
-            <argument>%parameter_name%</argument>
-        </service>
-    </services>
-    -->
     <services>
         <service id="pierstoval.twig.pierstoval_translation_extension" class="Pierstoval\Bundle\TranslationBundle\Twig\TranslationExtension">
             <tag name="twig.extension" />
             <argument type="service" id="translator" />
         </service>
 
-        <service id="translation.loader.db" class="Pierstoval\Bundle\TranslationBundle\Translation\TranslationLoader">
+        <service id="translation.loader.db" class="%pierstoval_translate.translator.loader%">
             <argument type="service" id="doctrine.orm.entity_manager" />
             <tag name="translation.loader" alias="db" />
         </service>

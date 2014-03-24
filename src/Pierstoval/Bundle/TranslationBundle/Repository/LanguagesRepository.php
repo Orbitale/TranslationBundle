@@ -1,12 +1,12 @@
 <?php
 namespace Pierstoval\Bundle\TranslationBundle\Repository;
 
-use Pierstoval\ToolsBundle\Repository\PierstovalRepository as PierstovalRepository;
+use Doctrine\ORM\EntityRepository;
 
 /**
  * LanguagesRepository
  *
  */
-class LanguagesRepository extends PierstovalRepository {
+class LanguagesRepository extends EntityRepository {
 
 }

@@ -1,12 +1,6 @@
-{% extends "PierstovalAdminBundle:Admin:layout.html.twig" %}
+{% block title %}{{ 'Index de la traduction' | trans }}{% endblock %}
 
-{% block title %}{{ 'Index de la traduction' | trans }} - {{ parent() }}{% endblock %}
-
-{% block admin_content %}
-<ol class="breadcrumb">
-    <li><a href="{{ url('pierstoval_admin_admin_index') }}">{{ 'Accueil' | trans }}</a></li>
-    <li><a href="{{ url('pierstoval_translation_translate_adminlist') }}">{{ 'Traductions' | trans }}</a></li>
-</ol>
+{% block body %}
     <h1>{{ 'Traductions' | trans }}</h1>
     <div class="row">
         {% for locale,catalogue in translations %}
