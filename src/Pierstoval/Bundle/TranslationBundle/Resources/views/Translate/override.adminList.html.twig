@@ -1,0 +1,33 @@
+
+<h1>{{ 'Traductions' | trans }}</h1>
+{% for key, messageList in app.session.flashbag.all() %}
+    <div class="alert alert-{{ key }}">
+        {% for message in messageList %}
+            {{ message | trans({}, 'messages.flash') | raw }}
+        {% endfor %}
+    </div>
+{% endfor %}
+<a class="btn btn-sm btn-link" href="{{ url('pierstoval_translation_translate_export') }}">{{ 'Exporter toutes les traductions' | trans({}, 'admin.translation') }}</a>
+<div class="row">
+    {% for locale,catalogue in translations %}
+        <div class="col-lg-3">
+           <h3>{{ locale | upper }}</h3>
+           <ul class="list-unstyled">
+           {% for domain, translation in catalogue %}
+                <li>
+                    <a class="bl" href="{{ url('pierstoval_translation_translate_edit', {'domain':domain,'locale':locale}) }}">
+                        {{ domain }}
+                        <span class="pull-right label label-{% if translation.count == 0 %}danger{% elseif translation.count > 0 and translation.count < translation.total %}warning{% else %}success{% endif %}">({{ translation.count }} / {{ translation.total }})</span>
+                    </a>
+                </li>
+           {% else %}
+               <li><div class="alert alert-danger">{{ 'Aucun élément' | trans }}</div></li>
+           {% endfor %}
+           {% if loop.index % 4 == 0 %}
+                </div><div class="row">
+           {% endif %}
+        </div>
+        {% else %}
+        <div class="col-lg-12 alert alert-danger">{{ 'Aucun élément' | trans }}</div>
+    {% endfor %}
+</div>
