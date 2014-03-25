@@ -113,6 +113,42 @@ If you want to **extract the translations from the database to files**, you can 
 
     When you specify the `--keep-files` option, it will only write non-existing files. It means you can save only "new translation domains" if you have new ones.
 
+Translations UI template
+-------------------------
+
+The UI template is really not beautiful. In fact, it's completely UGLY. But it is logical : the way I will design it will be different than the way YOU will design it, so in my opinion, there is no need to make a perfect design for this UI, especially if you want it to be directly integrated to your own backoffice system.
+
+So I made "template override" possible and easy for anyone, by adding two little files to your own templates.
+
+**Note :** At the moment where I write this, the template inheritance has been tested on a basic Symfony2 raw install, and on my own apps, but there may be some issues in the way you separate your own blocks, for example, javascript blocks.
+ 
+***How to use my own templates for the translation UI ?***
+
+It is really simple, and we'll use the native [Symfony2's Bundle inheritance](http://symfony.com/doc/master/cookbook/bundles/inheritance.html).
+
+Create this directory into your application : `%YourSF2Directory%/app/Resources/PierstovalTranslationBundle/views/Translate/`
+ 
+Then, create two files : `adminList.html.twig` and `edit.html.twig`. 
+
+Once you've done, all you have to do is **include the template which is finally rendered by the controller**.
+
+1. For `adminList.html.twig`, the element you have to include is the following :
+    `{% include 'PierstovalTranslationBundle:Translate:override.adminlist.html.twig' %}`
+2. And for `edit.html.twig`, the inclusion is this one :
+    `{% include 'PierstovalTranslationBundle:Translate:override.edit.html.twig' %}`
+
+You can put ANYTHING outside this inclusion, so you can render your own menus, extend your own layout, etc.
+
+**Bonus :**
+
+* If you have included **jQuery** to your layout, a "Save" button will appear, allowing you to save only one translation at a time with an AJAX request. This is useful when you have to translate only one or two missing elements.
+
+* If you have included **Twitter's Bootstrap** (v3) CSS framework to your layout, the buttons will use the bootstrap's *btn btn-default* class, and the admin index will show colored and labelled counts for translated/total elements.
+
+* If you have included **Twitter's Bootstrap** (v3) JS *Tooltip* feature, as jQuery is mandatory to bootstrap, the "Save" button will activate a tooltip next to the textarea containing the translation, with an information about the saving process (successful or not).
+
+Conclusion
+-------------------------
 
 You can also view this repository [on its Packagist.org page](https://packagist.org/packages/pierstoval/translation-bundle), even though it's not really useful to see.
 
