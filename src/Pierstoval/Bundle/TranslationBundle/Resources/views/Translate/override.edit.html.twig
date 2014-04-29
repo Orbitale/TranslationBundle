@@ -7,7 +7,6 @@
 <h4>{{ 'Domaine de traduction' | trans }} : {{ domain }}</h4>
 <h4>{{ 'Langue' | trans }} : {{ lang.name | trans }}</h4>
 
-
 {% if nb_translated is not null %}
     {% if nb_translated %}
         {{ 'Traductions enregistrées ! %count% modifications effectuées.' | trans({'%count%':nb_translated}) }}
@@ -44,16 +43,26 @@
         <div class="row">
             <div class="form-group col-lg-5">
                 <label class="control-label" data-token="{{ translation.token }}" for="translation{{ translation.token }}">{{ translation.source }}</label>
+                    {% for translationLike in translation.translationsLike %}
+                        {% if loop.first %}
+                            <div class="center-block text-info">{{ 'Traductions similaires trouvées' }} :</div>
+                        {% endif %}
+                        <small>{{ translationLike.source }} {{ translationLike.translation ? ' &#x25ba; ' : '' }} {{ translationLike.translation }}</small>
+                        {% if not loop.last %} &mdash; {% endif %}
+                    {% else %}
+                        {#{{ 'Aucune traduction similaire' | trans }}#}
+                    {% endfor %}
             </div>
             <div class="form-group col-lg-5">
                 <textarea data-modified="false" name="translation[{{ translation.token }}]" id="translation_{{ translation.token }}" class="form-control translation_text" placeholder="{{ 'Écrivez ici la traduction du texte ci-contre' | trans }}">{{ translation.translation | raw }}</textarea>
             </div>
             <div class="col-lg-2">
-                <button class="btn btn-default btn-sm validate_translation" type="button" data-target-item="translation_{{ translation.token }}">{{ 'Sauvegarder' | trans }}</button>
+                <button class="btn btn-default btnboo-sm validate_translation" type="button" data-target-item="translation_{{ translation.token }}">{{ 'Sauvegarder' | trans }}</button>
                 <button class="btn btn-default btn-sm recopy_message" type="button" data-target-item="translation_{{ translation.token }}">{{ 'Recopier le message d\'origine' | trans }}</button>
                 {#<button class="btn btn-default btn-sm check_translations" type="button" data-target-item="translation_{{ translation.token }}">{{ 'Voir les autres traductions' | trans }}</button>#}
             </div>
         </div>
+            <hr />
         {% else %}
             <div class="alert alert-danger">
                 <h3>{{ 'Aucune traduction n\'a été trouvée !' | trans }}</h3>

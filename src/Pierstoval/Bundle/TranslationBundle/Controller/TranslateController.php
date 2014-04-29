@@ -138,7 +138,8 @@ class TranslateController extends Controller {
 
             }
         }
-        $translations = $transRepo->findBy(array('locale'=>$locale,'domain'=>$domain));
+
+        $translations = $transRepo->findLikes($locale, $domain);
 
         $lang = $em->getRepository('PierstovalTranslationBundle:Languages')->findOneByLocale($locale);
 
