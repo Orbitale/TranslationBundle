@@ -3,6 +3,7 @@
 namespace Pierstoval\Bundle\TranslationBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * Translation
@@ -54,6 +55,29 @@ class Translation
      * @ORM\Column(name="domain", type="string", length=255)
      */
     private $domain;
+
+    /**
+     * @var ArrayCollection
+     */
+    private $translationsLike;
+
+    function __construct() {
+        $this->translationsLike = new ArrayCollection();
+    }
+
+    public function addTranslationLike(Translation $translation) {
+        $this->translationsLike->add($translation);
+        return $this;
+    }
+
+    public function removeTranslationLike(Translation $translation) {
+        $this->translationsLike->remove($translation);
+        return $this;
+    }
+
+    public function getTranslationsLike(){
+        return $this->translationsLike;
+    }
 
     /**
      * Get id
