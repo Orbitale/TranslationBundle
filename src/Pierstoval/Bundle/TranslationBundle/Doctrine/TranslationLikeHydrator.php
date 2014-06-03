@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: aancelet
- * Date: 29/04/14
- * Time: 14:25
- */
 
 namespace Pierstoval\Bundle\TranslationBundle\Doctrine;
 

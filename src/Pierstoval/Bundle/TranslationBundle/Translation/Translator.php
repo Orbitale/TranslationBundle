@@ -101,7 +101,7 @@ class Translator extends BaseTranslator implements TranslatorInterface {
             (is_string($id) && !trim($id))
             ||
             (is_object($id) && !trim($id->__toString()))
-            ) {
+        ) {
             return $id;
         }
 
@@ -115,6 +115,7 @@ class Translator extends BaseTranslator implements TranslatorInterface {
 
         if (!$domain) { $domain = 'messages'; }
 
+        // Récupère la traduction dans le catalogue de Symfony2 natif
         $translation = $this->findInNativeCatalogue($locale, $id, $domain);
 
         if (null === $translation) {
@@ -146,7 +147,6 @@ class Translator extends BaseTranslator implements TranslatorInterface {
             }
         }
 
-//        exit(strtr($translation, $parameters));
         return strtr($translation, $parameters);
     }
 
@@ -169,11 +169,6 @@ class Translator extends BaseTranslator implements TranslatorInterface {
             $translations = $this->_em
                 ->getRepository('PierstovalTranslationBundle:Translation')
                 ->findBy(array('locale'=>$locale,'domain'=>$domain));
-
-
-    //        if (!isset(self::$catalogue[$locale][$domain])) {
-    //            self::$catalogue[$locale][$domain] = array();
-    //        }
 
             if ($translations) {
                 foreach ($translations as $translation) {

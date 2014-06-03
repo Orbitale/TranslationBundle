@@ -18,11 +18,6 @@
 <form name="translate_update" id="translate_update" action="{{ url('pierstoval_translation_translate_edit', {'domain':domain,'locale':lang.locale}) }}" method="post">
     <fieldset>
         <div class="alert alert-info" id="always_save_indicator">
-            {#<label class="col-lg-4">#}
-                {#{{ 'Mise à jour automatique des traductions' | trans }}#}
-                {#<input type="checkbox" id="always_save" checked />#}
-            {#</label>#}
-            {#<div class="clearfix"></div>#}
             <a class="btn btn-sm alert-link btn-link" href="{{ url('pierstoval_translation_translate_adminlist') }}">&laquo; {{ 'Retour à la liste des traductions' | trans }}</a>
             <input type="submit" class="btn btn-default" id="submit_updates" name="submit_updates" value="{{ 'Sauvegarder les modifications' | trans({}, 'admin.translation') }}" />
             <a class="btn btn-sm btn-link" href="{{ url('pierstoval_translation_translate_export', {"locale": lang.locale}) }}">{{ 'Exporter les traductions de cette langue' | trans({}, 'admin.translation') }}</a>
@@ -49,17 +44,14 @@
                         {% endif %}
                         <small>{{ translationLike.source }} {{ translationLike.translation ? ' &#x25ba; ' : '' }} {{ translationLike.translation }}</small>
                         {% if not loop.last %} &mdash; {% endif %}
-                    {% else %}
-                        {#{{ 'Aucune traduction similaire' | trans }}#}
                     {% endfor %}
             </div>
             <div class="form-group col-lg-5">
                 <textarea data-modified="false" name="translation[{{ translation.token }}]" id="translation_{{ translation.token }}" class="form-control translation_text" placeholder="{{ 'Écrivez ici la traduction du texte ci-contre' | trans }}">{{ translation.translation | raw }}</textarea>
             </div>
             <div class="col-lg-2">
-                <button class="btn btn-default btnboo-sm validate_translation" type="button" data-target-item="translation_{{ translation.token }}">{{ 'Sauvegarder' | trans }}</button>
+                <button class="btn btn-default btn-sm validate_translation" type="button" data-target-item="translation_{{ translation.token }}">{{ 'Sauvegarder' | trans }}</button>
                 <button class="btn btn-default btn-sm recopy_message" type="button" data-target-item="translation_{{ translation.token }}">{{ 'Recopier le message d\'origine' | trans }}</button>
-                {#<button class="btn btn-default btn-sm check_translations" type="button" data-target-item="translation_{{ translation.token }}">{{ 'Voir les autres traductions' | trans }}</button>#}
             </div>
         </div>
             <hr />
