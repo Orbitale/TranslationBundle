@@ -21,7 +21,11 @@ class Translator extends BaseTranslator implements TranslatorInterface {
     private static $catalogue = array();
     private static $temporary_domain = null;
 
-    function __construct(ContainerInterface $container, MessageSelector $selector, $loaderIds = array(), array $options = array()) {
+    protected $hasToBeFlushed = false;
+    protected $flushed = false;
+    protected $entityManager;
+
+    function __construct($container, MessageSelector $selector, $loaderIds = array(), array $options = array()) {
         if ($container->isScopeActive('request')) {
             $locale = $container->get('session')->get('_locale');
             if (!$locale) { $locale = $container->getParameter('locale'); }
@@ -32,6 +36,9 @@ class Translator extends BaseTranslator implements TranslatorInterface {
             $container->get('session')->set('_locale', $locale);
             $container->get('request')->setLocale($locale);
         }
+
+        $this->_em = $container->get('doctrine')->getManager();
+
         return parent::__construct($container, $selector, $loaderIds, $options);
     }
 
@@ -48,9 +55,21 @@ class Translator extends BaseTranslator implements TranslatorInterface {
     }
 
     public function getLangs() {
-        return $this->container->get('doctrine')->getManager()
+        return $this->_em
             ->getRepository('PierstovalTranslationBundle:Languages')
             ->findAll();
+    }
+
+    function flushTranslations() {
+        if ($this->hasToBeFlushed && !$this->flushed) {
+            $this->_em->flush();
+            $this->flushed = true;
+        }
+        return $this;
+    }
+
+    function __destruct(){
+        $this->flushTranslations();
     }
 
     /**
@@ -113,15 +132,15 @@ class Translator extends BaseTranslator implements TranslatorInterface {
                     $translation = $id;
                 }
             } else {
-                $em = $this->container->get('doctrine')->getManager();
                 $translation = new Translation();
                 $translation
                     ->setToken($token)
                     ->setSource($id)
                     ->setDomain($domain)
                     ->setLocale($locale);
-                $em->persist($translation);
-                $em->flush();
+                $this->hasToBeFlushed = true;
+                $this->_em->persist($translation);
+//                $this->_em->flush();
                 self::$catalogue[$locale][$domain][$token] = $translation;
                 $translation = $id;
             }
@@ -147,7 +166,7 @@ class Translator extends BaseTranslator implements TranslatorInterface {
         $catalogue = self::$catalogue;
 
         if (!isset($catalogue[$locale][$domain])) {
-            $translations = $this->container->get('doctrine')->getManager()
+            $translations = $this->_em
                 ->getRepository('PierstovalTranslationBundle:Translation')
                 ->findBy(array('locale'=>$locale,'domain'=>$domain));
 

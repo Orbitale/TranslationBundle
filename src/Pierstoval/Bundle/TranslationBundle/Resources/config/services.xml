@@ -32,5 +32,10 @@
             <argument>%kernel.cache_dir%</argument>
             <argument>%pierstoval.translator.outputDirectory%</argument>
         </service>
+
+        <service id="pierstoval_tools.listener.flush_translations" class="Pierstoval\Bundle\TranslationBundle\Listeners\FlushTranslations">
+            <tag name="kernel.event_listener" event="kernel.finish_request" method="onKernelFinishRequest" />
+            <argument type="service" id="translator" />
+        </service>
     </services>
 </container>
