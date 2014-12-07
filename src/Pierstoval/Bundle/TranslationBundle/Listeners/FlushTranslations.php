@@ -3,8 +3,10 @@
 namespace Pierstoval\Bundle\TranslationBundle\Listeners;
 
 use Pierstoval\Bundle\TranslationBundle\Translation\Translator;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\HttpKernel\KernelEvents;
 
-class FlushTranslations {
+class FlushTranslations implements EventSubscriberInterface {
 
     protected $translator;
 
@@ -12,8 +14,20 @@ class FlushTranslations {
         $this->translator = $translator;
     }
 
-    function onKernelFinishRequest(){
+    function flushTranslations(){
         $this->translator->flushTranslations();
     }
 
-} 
+    /**
+     * {@inheritdoc
+     */
+    public static function getSubscribedEvents()
+    {
+        return array(
+            KernelEvents::FINISH_REQUEST => array('flushTranslations'),
+            KernelEvents::TERMINATE => array('flushTranslations'),
+            KernelEvents::EXCEPTION => array('flushTranslations')
+        );
+    }
+
+}

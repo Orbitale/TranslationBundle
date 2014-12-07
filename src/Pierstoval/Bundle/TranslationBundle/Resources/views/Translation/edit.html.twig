@@ -1,0 +1,84 @@
+{% extends layoutToExtend %}
+
+{% trans_default_domain "pierstoval_translation" %}
+
+{% block title %}{{ 'title.translation_update' | trans }}{% endblock %}
+
+{% block translation_stylesheets %}{{ parent() }}{% endblock %}
+
+{% block translation_admin_body %}
+
+    <h1>{{ 'title.message_translations' | trans }}</h1>
+
+    <div class="alert alert-info" id="always_save_indicator">
+        <a class="btn btn-sm alert-link btn-link" href="{{ url('pierstoval_translation_adminlist') }}">&laquo; {{ 'back_to_translations_list' | trans }}</a>
+        <a class="btn btn-default" href="{{ url('pierstoval_translation_export', {"locale": locale}) }}">{{ 'export_translations_lang' | trans }}</a>
+    </div>
+
+    <hr />
+
+    <h4>{{ 'translation_domain' | trans }} : {{ domain }}</h4>
+    <h4>{{ 'language' | trans }} : {{ lang | trans({},"languages") }}</h4>
+
+    {% if nb_translated is not null %}
+        {% if nb_translated %}
+            {{ 'translations_saved_count' | trans({'%count%':nb_translated}) }}
+        {% else %}
+            {{ 'no_modification' | trans }}
+        {% endif %}
+    {% endif %}
+
+    <form name="translate_update" id="translate_update" action="{{ url('pierstoval_translation_edit', {'domain':domain,'locale':locale}) }}" method="post">
+        <fieldset>
+            <input type="submit" class="btn btn-success" id="submit_updates" name="submit_updates" value="{{ 'save_modifications' | trans }}" />
+            <div class="row">
+                <div class="form-group col-lg-5">
+                    <h4>{{ 'message.original' | trans }}</h4>
+                </div>
+                <div class="form-group col-lg-5">
+                    <h4>{{ 'message.translation' | trans }}</h4>
+                </div>
+                <div class="btn-group col-lg-2">
+                    <h4>{{ 'actions' | trans }}</h4>
+                </div>
+            </div>
+            {% for item, translation in translations %}
+                <div class="row">
+                    <div class="form-group col-lg-5">
+                        <label class="control-label" data-token="{{ translation.token }}" for="translation{{ translation.token }}">{{ translation.source }}</label>
+                        {% for translationLike in translation.translationsLike %}
+                            {% if loop.first %}
+                                <br />{{ 'translations_like_found' }} :<br />
+                            {% endif %}
+                            <small>{{ translationLike.source }} {{ translationLike.translation ? ' &#x25ba; ' : '' }} {{ translationLike.translation }}</small>
+                            {% if not loop.last %} &mdash; {% endif %}
+                        {% endfor %}
+                    </div>
+                    <div class="form-group col-lg-5">
+                        <textarea data-modified="false" name="translation[{{ translation.token }}]" id="translation_{{ translation.token }}" class="form-control translation_text" placeholder="{{ 'translation_placeholder' | trans }}">{{ translation.translation | raw }}</textarea>
+                    </div>
+                    <div class="col-lg-2">
+                        <button class="btn btn-default btn-sm validate_translation" type="button" data-target-item="translation_{{ translation.token }}" style="display: none;">{{ 'save' | trans }}</button>
+                        <button class="btn btn-default btn-sm recopy_message" type="button" data-target-item="translation_{{ translation.token }}">{{ 'copy_original_message' | trans }}</button>
+                    </div>
+                </div>
+                <hr />
+            {% else %}
+                <div class="alert alert-danger">
+                    <h3>{{ 'no_translation_found' | trans }}</h3>
+                </div>
+            {% endfor %}
+        </fieldset>
+    </form>
+</div>
+
+{% endblock %}
+
+
+{% block translation_javascripts %}
+    {{ parent() }}
+    <script type="text/javascript">
+        var message_replace_content = '{{ 'replace_content' | trans }}';
+    </script>
+    <script type="text/javascript" src="{{ asset('bundles/pierstovaltranslation/js/translation.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,23 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>{% block title %}{% endblock %}</title>
+    {% block translation_stylesheets %}
+        <link rel="stylesheet" type="text/css" href="{{ asset('bundles/pierstovaltranslation/css/bootstrap.min.css') }}" />
+    {% endblock %}
+</head>
+<body>
+
+    {% block translation_admin_wrapper %}
+        <div class="container">
+        {% block translation_admin_body %}{% endblock %}
+        </div>
+    {% endblock %}
+
+    {% block translation_javascripts %}
+        <script type="text/javascript" src="{{ asset('bundles/pierstovaltranslation/js/jquery-2.1.1.min.js') }}"></script>
+        <script type="text/javascript" src="{{ asset('bundles/pierstovaltranslation/js/bootstrap.min.js') }}"></script>
+    {% endblock %}
+</body>
+</html>

@@ -1,0 +1,17 @@
+pierstoval_translation_adminlist:
+    path:      /translations/
+    defaults:
+        _controller: PierstovalTranslationBundle:Translation:adminList
+
+pierstoval_translation_export:
+    path:      /translations/export/{locale}
+    defaults:
+        _controller: PierstovalTranslationBundle:Translation:export
+        locale: null
+    requirements:
+        locale: "[a-z]*"
+
+pierstoval_translation_edit:
+    path:      /translations/{locale}/{domain}
+    defaults:
+        _controller: PierstovalTranslationBundle:Translation:edit

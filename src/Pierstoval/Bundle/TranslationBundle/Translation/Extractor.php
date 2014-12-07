@@ -7,6 +7,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Translation\Catalogue\MergeOperation;
 use Symfony\Component\Translation\MessageCatalogue;
+use Symfony\Component\Translation\Writer\TranslationWriter;
 
 /**
  * Service permettant l'extraction des données de traduction dans la BDD vers des fichiers utilisés par Symfony2
@@ -24,7 +25,10 @@ class Extractor {
     private $cli_input;
     private $cli_output;
 
-    function __construct(EntityManager $em, $translation_writer, $root_dir, $cache_dir, $configured_dir = null) {
+    /** @var TranslationWriter */
+    private $translation_writer;
+
+    function __construct(EntityManager $em, TranslationWriter $translation_writer, $root_dir, $cache_dir, $configured_dir = null) {
         $this->em = $em;
         $this->translation_writer = $translation_writer;
         $this->root_dir = $root_dir;
@@ -107,6 +111,7 @@ class Extractor {
         if ($cli) {
             $output->writeln('Processing extraction...');
         }
+
         $writer->writeTranslations($operation->getResult(), $outputFormat, array('path' => $outputDirectory));
 
         $cache_dirs = $this->cache_dir.'/../';

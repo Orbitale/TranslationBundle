@@ -19,6 +19,7 @@ class TranslationLikeHydrator extends AbstractHydrator {
         $owners = $this->_rsm->columnOwnerMap;
         $mapping_fields = $this->_rsm->fieldMappings;
 
+        // Looping all the rows
         while ($row = $this->_stmt->fetch(PDO::FETCH_ASSOC)) {
             if (isset($results[$row['id0']])) {
                 $result = $results[$row['id0']];
@@ -27,18 +28,20 @@ class TranslationLikeHydrator extends AbstractHydrator {
             }
             $like = new Translation();
             foreach ($owners as $dqlAlias => $element) {
+                // Uses reflection system to hydrate the object
                 $value = $row[$dqlAlias];
                 $fieldName = $mapping_fields[$dqlAlias];
 
                 if ( $fieldName !== 'id' || ($fieldName == 'id' && $value) ) {
 
-                    if ($element == 'translationsLike') {
-                        // Add to translation
+                    if ($element === 'translationsLike') {
+                        // Hydrates a translation-like
                         $refObject   = new \ReflectionObject( $like );
                         $refProperty = $refObject->getProperty( $fieldName );
                         $refProperty->setAccessible(true);
                         $refProperty->setValue($like, $value);
                     } else {
+                        // Hydrates a "master" translation
                         $refObject   = new \ReflectionObject( $result );
                         $refProperty = $refObject->getProperty( $fieldName );
                         $refProperty->setAccessible(true);

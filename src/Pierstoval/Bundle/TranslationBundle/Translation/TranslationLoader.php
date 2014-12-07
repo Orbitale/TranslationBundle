@@ -2,8 +2,11 @@
 
 namespace Pierstoval\Bundle\TranslationBundle\Translation;
 
+use Pierstoval\Bundle\TranslationBundle\Entity\Translation;
+use Pierstoval\Bundle\TranslationBundle\Repository\TranslationRepository;
 use Symfony\Component\Translation\Loader\LoaderInterface;
 use Doctrine\ORM\EntityManager;
+use Symfony\Component\Translation\MessageCatalogue;
 
 /**
  * Class TranslationLoader
@@ -15,7 +18,7 @@ use Doctrine\ORM\EntityManager;
 class TranslationLoader implements LoaderInterface {
 
     /**
-     * @var Pierstoval\Bundle\TranslationBundle\Repository\TranslationRepository
+     * @var TranslationRepository
      */
     private $transRepo;
 
@@ -24,11 +27,11 @@ class TranslationLoader implements LoaderInterface {
      */
     public function __construct(EntityManager $entityManager){
         $this->transRepo = $entityManager->getRepository("PierstovalTranslationBundle:Translation");
-//        $this->langRepo = $entityManager->getRepository("PierstovalTranslationBundle:Languages");
     }
 
     function load($resource, $locale, $domain = 'messages'){
 
+        /** @var Translation[] $translations */
         $translations = $this->transRepo->findBy(array('locale' => $locale, 'domain' => $domain));
 
         $catalogue = new MessageCatalogue($locale);

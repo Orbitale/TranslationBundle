@@ -1,0 +1,9 @@
+parameters:
+    pierstoval_translation.default_layout: PierstovalTranslationBundle:Translation:_layout.html.twig
+    pierstoval_translation.translator.class: Pierstoval\Bundle\TranslationBundle\Translation\Translator
+    pierstoval_translation.loader: Pierstoval\Bundle\TranslationBundle\Translation\TranslationLoader
+    pierstoval_translation.extractor.class: Pierstoval\Bundle\TranslationBundle\Translation\Extractor
+    pierstoval_translation.output_directory: ~
+
+    # Overrides the Symfony2's translator. Disabled only when removing "import resources" for this file from config.yml
+    translator.class: %pierstoval_translation.translator.class%

@@ -4,6 +4,7 @@ namespace Pierstoval\Bundle\TranslationBundle\DependencyInjection;
 
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
+use Symfony\Component\Config\Definition\Exception\InvalidTypeException;
 
 /**
  * This is the class that validates and merges configuration from your app/config files
@@ -20,9 +21,19 @@ class Configuration implements ConfigurationInterface
         $treeBuilder = new TreeBuilder();
         $rootNode = $treeBuilder->root('pierstoval_translation');
 
-        // Here you should define the parameters that are allowed to
-        // configure your bundle. See the documentation linked above for
-        // more information on that topic.
+        $rootNode
+            ->children()
+                ->booleanNode('use_sonata')->defaultFalse()->end()
+                ->scalarNode('admin_layout')->defaultNull()->end()
+                ->scalarNode('output_directory')->defaultNull()->end()
+                ->variableNode('locales')
+                    ->validate()
+                    ->always(function ($v) {
+                        if (!empty($v) && (is_string($v) || is_array($v))) { return $v; }
+                        throw new InvalidTypeException();
+                    })
+                ->end()
+            ->end();
 
         return $treeBuilder;
     }

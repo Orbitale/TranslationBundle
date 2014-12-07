@@ -1,0 +1,22 @@
+actions: Actions
+back_to_translations_list: 'Back to translations list'
+copy_original_message: 'Copy original messages'
+export_all: 'Export all'
+export_translations_lang: 'Export this languages'
+extraction_done: 'Extraction done!'
+language: Language
+message.original: 'Original message'
+message.translation: Translation
+no_element: 'No element'
+no_modification: 'No modification has been done'
+replace_content: 'Replace content?'
+save_modifications: 'Save modifications'
+save: Save
+title.message_translations: 'Translation modifications'
+title.translation_index: 'Translations index'
+title.translation_update: 'Update translations'
+translation_domain: 'Translation domain'
+translation_done: 'Translation done!'
+translation_identical: 'Translation identical: no modification has been done'
+translation_placeholder: 'Write here the translation of the text aside'
+translations: Translations

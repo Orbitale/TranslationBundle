@@ -1,0 +1,25 @@
+{% trans_default_domain "pierstoval_translation" %}
+<div>
+    {% if translations|length %}
+        <table class="table table-condensed">
+            <tr>
+                <th colspan="4"><h4>{{ 'sonata.translations_like' | trans }}</h4></th>
+            </tr>
+            <tr>
+                <th style="width: 30px;">{{ 'locale' | trans }}</th>
+                <th style="width: 190px;">{{ 'translation_domain' | trans }}</th>
+                <th >{{ 'source' | trans }}</th>
+                <th >{{ 'translations_if_specified' | trans }}</th>
+            </tr>
+            {% for translation in translations %}
+                <tr>
+                    <td>{{ translation.locale }}</td>
+                    <td>{{ translation.domain }}</td>
+                    <td>{{ translation.source }}</td>
+                    <td>{{ translation.translation }}</td>
+                </tr>
+            {% endfor %}
+
+        </table>
+    {% endif %}
+</div>

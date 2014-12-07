@@ -1,0 +1,22 @@
+actions: Actions
+back_to_translations_list: 'Retour à la liste des traductions'
+copy_original_message: 'Copier le message original'
+export_all: 'Tout exporter'
+export_translations_lang: 'Exporter cette langue'
+extraction_done: 'Extraction effectuée !'
+language: Langue
+message.original: 'Message original'
+message.translation: Traduction
+no_element: 'Aucun élément'
+no_modification: 'Aucune modification n''a été effectuée'
+replace_content: 'Remplacer le contenu ?'
+save_modifications: 'Sauvegarder les modifications'
+save: Sauvegarder
+title.message_translations: 'Modification des traductions'
+title.translation_index: 'Index des traductions'
+title.translation_update: 'Mise à jour des traductions'
+translation_domain: 'Domaine de traduction'
+translation_done: 'Traduction effectuée !'
+translation_identical: 'Traduction identique : aucune modification n''a été faite'
+translation_placeholder: 'Écrivez ici la traduction du texte ci-contre'
+translations: Traductions

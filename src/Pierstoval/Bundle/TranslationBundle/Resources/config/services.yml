@@ -1,0 +1,38 @@
+services:
+    translation.loader.db:
+        class: %pierstoval_translation.loader%
+        arguments:
+            - @doctrine.orm.entity_manager
+        tags:
+            - { name: translation.loader, alias: db }
+
+    pierstoval_translator:
+        class: %pierstoval_translation.translator.class%
+        arguments:
+            - @service_container
+            - @translator.selector
+            - []
+            - {cache_dir: %kernel.cache_dir%/translations, debug: %kernel.debug%}
+
+    pierstoval.translation.extractor:
+        class: %pierstoval_translation.extractor.class%
+        arguments: 
+            - @doctrine.orm.entity_manager
+            - @translation.writer
+            - %kernel.root_dir%
+            - %kernel.cache_dir%
+            - %pierstoval_translation.output_directory%
+
+    pierstoval_tools.listener.flush_translations:
+        class: Pierstoval\Bundle\TranslationBundle\Listeners\FlushTranslations
+        arguments:
+            - @pierstoval_translator
+        tags:
+            - { name: kernel.event_subscriber }
+
+    pierstoval_tools.listener.locale:
+        class: Pierstoval\Bundle\TranslationBundle\Listeners\LocaleListener
+        arguments:
+            - "%kernel.default_locale%"
+        tags:
+            - { name: kernel.event_subscriber }

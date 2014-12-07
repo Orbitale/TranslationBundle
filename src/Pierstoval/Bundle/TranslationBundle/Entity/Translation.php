@@ -8,8 +8,8 @@ use Doctrine\Common\Collections\ArrayCollection;
 /**
  * Translation
  *
- * @ORM\Table(name="translation")
- * @ORM\Entity(repositoryClass="\Pierstoval\Bundle\TranslationBundle\Repository\TranslationRepository")
+ * @ORM\Table(name="pierstoval_translations")
+ * @ORM\Entity(repositoryClass="Pierstoval\Bundle\TranslationBundle\Repository\TranslationRepository")
  */
 class Translation
 {
@@ -61,22 +61,13 @@ class Translation
      */
     private $translationsLike;
 
+    public function __toString()
+    {
+        return $this->source;
+    }
+
     function __construct() {
         $this->translationsLike = new ArrayCollection();
-    }
-
-    public function addTranslationLike(Translation $translation) {
-        $this->translationsLike->add($translation);
-        return $this;
-    }
-
-    public function removeTranslationLike(Translation $translation) {
-        $this->translationsLike->remove($translation);
-        return $this;
-    }
-
-    public function getTranslationsLike(){
-        return $this->translationsLike;
     }
 
     /**
@@ -202,5 +193,33 @@ class Translation
     public function getTranslation()
     {
         return $this->translation;
+    }
+
+    /**
+     * Adds translation like
+     * @param Translation $translation
+     * @return $this
+     */
+    public function addTranslationLike(Translation $translation) {
+        $this->translationsLike->add($translation);
+        return $this;
+    }
+
+    /**
+     * Remove translation like
+     * @param Translation $translation
+     * @return $this
+     */
+    public function removeTranslationLike(Translation $translation) {
+        $this->translationsLike->remove($translation);
+        return $this;
+    }
+
+    /**
+     * Get translations like
+     * @return Translation[]
+     */
+    public function getTranslationsLike(){
+        return $this->translationsLike;
     }
 }
