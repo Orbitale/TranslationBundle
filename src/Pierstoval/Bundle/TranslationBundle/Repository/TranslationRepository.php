@@ -154,4 +154,35 @@ class TranslationRepository extends EntityRepository {
 
         return $query->getResult('translation_like');
     }
+
+    /**
+     * @return Translation[]
+     */
+    public function getForAdmin()
+    {
+        $list = $this->findAll();
+
+        $translations = array();
+        foreach ($list as $translation) {
+            $locale = $translation->getLocale();
+            $domain = $translation->getDomain();
+
+            if (!isset($translations[$locale][$domain])) {
+                $translations[$locale][$domain] = array(
+                    'count' => 0,
+                    'total' => 0,
+                );
+            }
+            if ($translation->getTranslation()) {
+                $translations[$locale][$domain]['count']++;
+            }
+
+            $translations[$locale][$domain]['total']++;
+            ksort($translations[$locale]);
+        }
+
+        ksort($translations);
+
+        return $translations;
+    }
 }

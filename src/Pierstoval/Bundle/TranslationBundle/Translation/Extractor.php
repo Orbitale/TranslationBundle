@@ -22,7 +22,6 @@ class Extractor {
     private $cache_dir;
     private $cli = false;// Used to check if service is called from command line
     private $dir_checked = false;
-    private $cli_input;
     private $cli_output;
 
     /** @var TranslationWriter */
@@ -36,9 +35,8 @@ class Extractor {
         $this->configured_dir = $configured_dir;
     }
 
-    public function cli(InputInterface $input, OutputInterface $output) {
+    public function cli(OutputInterface $output) {
         $this->cli = true;
-        $this->cli_input = $input;
         $this->cli_output = $output;
     }
 
@@ -50,7 +48,6 @@ class Extractor {
 
         $cli = $this->cli;
         if ($cli) {
-            $input = $this->cli_input;
             $output = $this->cli_output;
             $verbosity = $output->getVerbosity();
         }
@@ -132,7 +129,6 @@ class Extractor {
         $this->dir_checked = false;
         $this->cli = false;
         $this->cli_output = null;
-        $this->cli_input = null;
 
         return true;
     }
@@ -183,4 +179,4 @@ class Extractor {
             return $this;
         }
     }
-} 
+}

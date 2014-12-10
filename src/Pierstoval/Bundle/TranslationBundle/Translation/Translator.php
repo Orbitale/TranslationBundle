@@ -158,7 +158,7 @@ class Translator extends BaseTranslator implements TranslatorInterface {
                     ->setLocale($locale);
                 $this->hasToBeFlushed = true;
                 $this->translationsToPersist[] = $translation;
-                self::$catalogue[$locale][$domain][$token] = $translation;
+                static::$catalogue[$locale][$domain][$token] = $translation;
                 $translation = $id;
             }
         }
@@ -167,7 +167,7 @@ class Translator extends BaseTranslator implements TranslatorInterface {
     }
 
     protected function findToken($token) {
-        $catalogue = self::$catalogue;
+        $catalogue = static::$catalogue;
         foreach ($catalogue as $locale_catalogue) {
             foreach ($locale_catalogue as $domain_catalogue) {
                 if (isset($domain_catalogue[$token])) {
@@ -179,7 +179,7 @@ class Translator extends BaseTranslator implements TranslatorInterface {
     }
 
     protected function loadDbCatalogue($locale, $domain){
-        $catalogue = self::$catalogue;
+        $catalogue = static::$catalogue;
 
         if (!isset($catalogue[$locale][$domain])) {
             $translations = $this->_em
@@ -189,7 +189,7 @@ class Translator extends BaseTranslator implements TranslatorInterface {
             if ($translations) {
                 foreach ($translations as $translation) {
                     /** @var Translation $translation */
-                    self::$catalogue[$locale][$translation->getDomain()][$translation->getToken()] = $translation;
+                    static::$catalogue[$locale][$translation->getDomain()][$translation->getToken()] = $translation;
                 }
             }
         }

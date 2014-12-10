@@ -67,7 +67,7 @@ EOF
 
         $extractor = $this->getContainer()->get('pierstoval.translation.extractor');
 
-        $extractor->cli($input, $output);
+        $extractor->cli($output);
 
         $outputCheck = $extractor->checkOutputDir($outputDirectory, true);
 

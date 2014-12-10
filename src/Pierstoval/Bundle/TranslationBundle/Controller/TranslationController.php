@@ -6,7 +6,6 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Pierstoval\Bundle\TranslationBundle\Entity\Translation;
 use Pierstoval\Bundle\TranslationBundle\Repository\TranslationRepository;
 use Pierstoval\Bundle\TranslationBundle\Translation\Extractor;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -32,54 +31,21 @@ class TranslationController extends Controller
             throw $this->createNotFoundException($msg);
         }
 
-        // Gets public name
-        $localeName = $translator->trans($locales[$locale]);
-
         // Changes the locale in session
         $request->getSession()->set('_locale', $locale);
 
-        $msg = $translator->trans('La langue a été modifiée pour : %lang%', array('%lang%' => $localeName));
-        $request->getSession()->getFlashBag()->add('info', $msg);
+        $request->getSession()->getFlashBag()->add('info', $translator->trans('La langue a été modifiée pour : %lang%', array('%lang%' => $translator->trans($locales[$locale]))));
 
         // Allows redirection with ?redirect= param
-        $redirect = $request->query->has('redirect') ? $request->query->get('redirect') : $request->getBaseUrl();
-
-        return $this->redirect($redirect);
+        return $this->redirect($request->query->has('redirect') ? $request->query->get('redirect') : $request->getBaseUrl());
     }
 
     public function adminListAction()
     {
-        /** @var Translation[] $list */
-        $list = $this->getDoctrine()->getManager()->getRepository('PierstovalTranslationBundle:Translation')->findAll();
-
-        $translations = array();
-        foreach ($list as $translation) {
-            $locale = $translation->getLocale();
-            $domain = $translation->getDomain();
-
-            if (!isset($translations[$locale][$domain])) {
-                $translations[$locale][$domain] = array(
-                    'count' => 0,
-                    'total' => 0,
-                );
-            }
-            if ($translation->getTranslation()) {
-                $translations[$locale][$domain]['count']++;
-            }
-
-            if ($translations[$locale][$domain]['count'] && $translations[$locale][$domain]['count'] < $translations[$locale][$domain]['total']) {
-            } elseif ($translations[$locale][$domain]['count'] && $translations[$locale][$domain]['count'] === $translations[$locale][$domain]['total']) {
-            }
-
-            $translations[$locale][$domain]['total']++;
-            ksort($translations[$locale]);
-        }
-        ksort($translations);
-
-        $layoutToExtend = $this->container->getParameter('pierstoval_translation.admin_layout') ?: $this->container->getParameter('pierstoval_translation.default_layout');
+        $translations = $this->getDoctrine()->getManager()->getRepository('PierstovalTranslationBundle:Translation')->getForAdmin();
 
         return $this->render('PierstovalTranslationBundle:Translation:adminList.html.twig', array(
-            'layoutToExtend' => $layoutToExtend,
+            'layoutToExtend' => $this->container->getParameter('pierstoval_translation.admin_layout') ?: $this->container->getParameter('pierstoval_translation.default_layout'),
             'translations' => $translations,
         ));
     }
@@ -107,13 +73,10 @@ class TranslationController extends Controller
         }
 
         if ($done) {
-            $msg = $this->container->get('translator')->trans('extraction_done', array(), 'pierstoval_translation');
-            $request->getSession()->getFlashBag()->add('success', $msg);
+            $request->getSession()->getFlashBag()->add('success', $this->container->get('translator')->trans('extraction_done', array(), 'pierstoval_translation'));
             return $this->redirect($this->generateUrl('pierstoval_translation_adminlist'));
         } else {
-            //Une erreur inconnue est survenue dans l\'extractions des traductions...
-            $msg = $this->container->get('translator')->trans('error.translation_extract', array(), 'pierstoval_translation');
-            throw new \Exception($msg);
+            throw new \Exception($this->container->get('translator')->trans('error.translation_extract', array(), 'pierstoval_translation'));
         }
     }
 
@@ -172,7 +135,7 @@ class TranslationController extends Controller
             $translation = $post->get('translation');
             $check_translations = $post->get('check_translation');
             if ($token && $translation && !$check_translations) {
-                return $this->_saveTranslation($token, $translation, $em);
+                return $this->saveTranslation($token, $translation, $em);
             }
         } else {
             $tokens = $post->get('translation');
@@ -211,7 +174,7 @@ class TranslationController extends Controller
      * @param ObjectManager $em
      * @return Response
      */
-    private function _saveTranslation($token, $translation, $em)
+    private function saveTranslation($token, $translation, $em)
     {
         $message = 'error.';
         $translated = false;

@@ -3,13 +3,13 @@
 namespace Pierstoval\Bundle\TranslationBundle\Admin;
 
 use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\Query;
 use Pierstoval\Bundle\TranslationBundle\Entity\Translation;
 use Sonata\AdminBundle\Admin\Admin;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
 use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Form\FormMapper;
 use Sonata\AdminBundle\Route\RouteCollection;
+use Sonata\DoctrineORMAdminBundle\Datagrid\ProxyQuery;
 
 class TranslationAdmin extends Admin {
 
@@ -50,7 +50,7 @@ class TranslationAdmin extends Admin {
             ->add('domain', 'doctrine_orm_string', array('field_type' => 'choice'), null, array('choices' => $domains))
             ->add('locale', 'doctrine_orm_string', array('field_type' => 'choice'), null, array('choices' => $locales))
             ->add('translation_empty', 'doctrine_orm_callback', array(
-                'callback' => function($queryBuilder, $alias, $field, $value) {
+                'callback' => function(ProxyQuery $queryBuilder, $alias, $field, $value) {
                     if (!$value['value']) {
                         return;
                     }
