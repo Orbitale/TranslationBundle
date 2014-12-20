@@ -35,7 +35,6 @@ class Translator extends BaseTranslator implements TranslatorInterface {
      */
     private static $catalogue = array();
 
-    protected $locales = array();
     protected $hasToBeFlushed = false;
     protected $flushed = false;
 
@@ -44,8 +43,6 @@ class Translator extends BaseTranslator implements TranslatorInterface {
 
     function __construct(ContainerInterface $container, MessageSelector $selector, $loaderIds = array(), array $options = array()) {
         parent::__construct($container, $selector, $loaderIds, $options);
-
-        $this->locales = $this->container->getParameter('locales');
 
         $this->_em = $this->container->get('doctrine')->getManager();
     }
@@ -64,7 +61,7 @@ class Translator extends BaseTranslator implements TranslatorInterface {
      * @return array
      */
     public function getLangs() {
-        return $this->locales;
+        return $this->container->getParameter('pierstoval_translation.locales');
     }
 
     /**

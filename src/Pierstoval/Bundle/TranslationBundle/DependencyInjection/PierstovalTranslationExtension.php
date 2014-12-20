@@ -26,7 +26,6 @@ class PierstovalTranslationExtension extends Extension
 
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
         $loader->load('parameters.yml');
-        $loader->load('services.yml');
         $loader->load('default_locales.yml');
 
         if (isset($config['locales']) && !empty($config['locales'])) {
@@ -40,6 +39,10 @@ class PierstovalTranslationExtension extends Extension
         foreach ($config as $key => $value) {
             $container->setParameter('pierstoval_translation.' . $key, $value);
         }
+
+        $container->setParameter('locales', $config['locales']);
+
+        $loader->load('services.yml');
 
     }
 
