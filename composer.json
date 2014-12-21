@@ -14,7 +14,8 @@
     ],
     "require": {
         "php": ">=5.3.3",
-        "symfony/symfony": ">=2.4,<3"
+        "symfony/symfony": ">=2.4,<3",
+        "twig/twig": "*"
     },
     "suggest": {
         "sonata-project/admin-bundle": "Useful to add an Admin interface to manage your translations with SonataAdminBundle"

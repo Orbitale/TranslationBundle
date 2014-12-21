@@ -23,16 +23,23 @@ services:
             - %kernel.cache_dir%
             - %pierstoval_translation.output_directory%
 
-    pierstoval_tools.listener.flush_translations:
+    pierstoval_translation.listener.flush_translations:
         class: Pierstoval\Bundle\TranslationBundle\Listeners\FlushTranslations
         arguments:
             - @pierstoval_translator
         tags:
             - { name: kernel.event_subscriber }
 
-    pierstoval_tools.listener.locale:
+    pierstoval_translation.listener.locale:
         class: Pierstoval\Bundle\TranslationBundle\Listeners\LocaleListener
         arguments:
             - "%kernel.default_locale%"
         tags:
             - { name: kernel.event_subscriber }
+
+    pierstoval_translation.twig.extension:
+        class: Pierstoval\Bundle\TranslationBundle\Twig\TranslationExtension
+        arguments:
+            - @pierstoval_translator
+        tags:
+            - { name: twig.extension }
