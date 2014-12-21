@@ -3,7 +3,6 @@ namespace Pierstoval\Bundle\TranslationBundle\Translation;
 
 
 use Doctrine\ORM\EntityManager;
-use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Translation\Catalogue\MergeOperation;
 use Symfony\Component\Translation\MessageCatalogue;

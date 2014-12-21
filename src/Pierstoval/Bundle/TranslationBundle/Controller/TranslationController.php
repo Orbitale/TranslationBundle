@@ -57,10 +57,7 @@ class TranslationController extends Controller
 
         $done = true;
 
-        $languages = null;
-        if (!$locale || $locale = 'all') {
-            $languages = array_keys($this->container->getParameter('locales'));
-        }
+        $languages = (!$locale || $locale = 'all') ? array_keys($this->container->getParameter('locales')) : null;
 
         if ($languages) {
             foreach ($languages as $locale) {
@@ -139,10 +136,9 @@ class TranslationController extends Controller
             }
         } else {
             $tokens = $post->get('translation');
-            $keys = array_keys($tokens);
 
             /** @var Translation[] $found */
-            $found = $transRepo->findByTokens($keys);
+            $found = $transRepo->findByTokens(array_keys($tokens));
 
             foreach ($found as $translation) {
                 if (

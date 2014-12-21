@@ -41,7 +41,7 @@ class Translator extends BaseTranslator implements TranslatorInterface {
     /** @var EntityManager $_em */
     protected $_em;
 
-    function __construct(ContainerInterface $container, MessageSelector $selector, $loaderIds = array(), array $options = array()) {
+    function __construct($container, MessageSelector $selector, $loaderIds = array(), array $options = array()) {
         parent::__construct($container, $selector, $loaderIds, $options);
 
         $this->_em = $this->container->get('doctrine')->getManager();
