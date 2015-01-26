@@ -31,18 +31,41 @@ class Translator extends BaseTranslator implements TranslatorInterface {
 
     /**
      * Contains all translations which are recovered from database
+     * This attribute is static because it will force the class to always
+     * have the same catalogue through the all application, to avoid too many
+     * database queries.
      * @var array
      */
     private static $catalogue = array();
 
+    /**
+     * Override the native message selector to be able to use it for `transchoice` method
+     * @var MessageSelector
+     */
+    private $selector;
+
+    /**
+     * @var bool
+     */
     protected $hasToBeFlushed = false;
+    /**
+     * @var bool
+     */
     protected $flushed = false;
 
     /** @var EntityManager $_em */
     protected $_em;
 
+    /**
+     * @param ContainerInterface $container
+     * @param MessageSelector    $selector
+     * @param array              $loaderIds
+     * @param array              $options
+     */
     function __construct($container, MessageSelector $selector, $loaderIds = array(), array $options = array()) {
         parent::__construct($container, $selector, $loaderIds, $options);
+
+        $this->selector = $selector ?: new MessageSelector();
 
         $this->_em = $this->container->get('doctrine')->getManager();
     }
@@ -69,7 +92,7 @@ class Translator extends BaseTranslator implements TranslatorInterface {
      * then flushes the manager and clears all translations to be persisted
      * @return $this
      */
-    function flushTranslations() {
+    public function flushTranslations() {
         if ($this->hasToBeFlushed && !$this->flushed) {
             foreach ($this->translationsToPersist as $translation) {
                 $this->_em->persist($translation);
@@ -86,7 +109,7 @@ class Translator extends BaseTranslator implements TranslatorInterface {
      * In case of, flush is launched anytime the object is destructed.
      * This allows flushing even when there is any kind of error, or when the listener is not triggered.
      */
-    function __destruct(){
+    public function __destruct(){
         $this->flushTranslations();
     }
 
@@ -98,7 +121,7 @@ class Translator extends BaseTranslator implements TranslatorInterface {
      * @param string $domain
      * @return string|null
      */
-    function findInNativeCatalogue($locale, $source, $domain) {
+    public function findInNativeCatalogue($locale, $source, $domain) {
         if (!isset($this->catalogues[$locale])) {
             // Loads native catalogue
             $this->loadCatalogue($locale);
@@ -114,6 +137,32 @@ class Translator extends BaseTranslator implements TranslatorInterface {
     */
     public function trans($id, array $parameters = array(), $domain = null, $locale = null){
 
+        $translation = $this->getTranslation($id, $domain, $locale);
+
+        return strtr($translation, $parameters);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function transChoice($id, $number, array $parameters = array(), $domain = null, $locale = null) {
+
+        $translation = $this->getTranslation($id, $domain, $locale);
+
+        return strtr($this->selector->choose($translation, (int) $number, $locale), $parameters);
+    }
+
+    /**
+     * Finds a translation, first, in the native catalogue.
+     * Then, searches for it in the database.
+     * If the element is still not found, it will persist a new "dirty" Translation object in the database.
+     * @param mixed $id
+     * @param string $domain
+     * @param string $locale
+     * @return string
+     */
+    protected function getTranslation($id, $domain, $locale)
+    {
         if (
             !$id
             || (is_string($id) && !trim($id))
@@ -124,7 +173,11 @@ class Translator extends BaseTranslator implements TranslatorInterface {
             return $id;
         }
 
-        if (!$locale) { $locale = $this->getLocale(); }
+        if (null === $locale) {
+            $locale = $this->getLocale();
+        } else {
+            $this->assertValidLocale($locale);
+        }
         if (!$domain) { $domain = 'messages'; }
 
         // Récupère la traduction dans le catalogue de Symfony2 natif
@@ -160,9 +213,14 @@ class Translator extends BaseTranslator implements TranslatorInterface {
             }
         }
 
-        return strtr($translation, $parameters);
+        return $translation;
     }
 
+    /**
+     * Searches for a token in the static catalogue and returns it if found.
+     * @param string $token
+     * @return null|Translation
+     */
     protected function findToken($token) {
         $catalogue = static::$catalogue;
         foreach ($catalogue as $locale_catalogue) {
@@ -175,6 +233,11 @@ class Translator extends BaseTranslator implements TranslatorInterface {
         return null;
     }
 
+    /**
+     * Loads and populates a catalogue from the database.
+     * @param string $locale
+     * @param string $domain
+     */
     protected function loadDbCatalogue($locale, $domain){
         $catalogue = static::$catalogue;
 
