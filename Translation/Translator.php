@@ -27,7 +27,7 @@ class Translator extends BaseTranslator implements TranslatorInterface {
     /**
      * @var Translation[]
      */
-    private $translationsToPersist;
+    protected $translationsToPersist;
 
     /**
      * Contains all translations which are recovered from database
@@ -36,7 +36,7 @@ class Translator extends BaseTranslator implements TranslatorInterface {
      * database queries.
      * @var array
      */
-    private static $catalogue = array();
+    protected static $catalogue = array();
 
     /**
      * Override the native message selector to be able to use it for `transchoice` method
@@ -208,7 +208,7 @@ class Translator extends BaseTranslator implements TranslatorInterface {
                     ->setLocale($locale);
                 $this->hasToBeFlushed = true;
                 $this->translationsToPersist[] = $translation;
-                static::$catalogue[$locale][$domain][$token] = $translation;
+                self::$catalogue[$locale][$domain][$token] = $translation;
                 $translation = $id;
             }
         }
@@ -222,7 +222,7 @@ class Translator extends BaseTranslator implements TranslatorInterface {
      * @return null|Translation
      */
     protected function findToken($token) {
-        $catalogue = static::$catalogue;
+        $catalogue = self::$catalogue;
         foreach ($catalogue as $locale_catalogue) {
             foreach ($locale_catalogue as $domain_catalogue) {
                 if (isset($domain_catalogue[$token])) {
@@ -239,7 +239,7 @@ class Translator extends BaseTranslator implements TranslatorInterface {
      * @param string $domain
      */
     protected function loadDbCatalogue($locale, $domain){
-        $catalogue = static::$catalogue;
+        $catalogue = self::$catalogue;
 
         if (!isset($catalogue[$locale][$domain])) {
             $translations = $this->_em
@@ -249,7 +249,7 @@ class Translator extends BaseTranslator implements TranslatorInterface {
             if ($translations) {
                 foreach ($translations as $translation) {
                     /** @var Translation $translation */
-                    static::$catalogue[$locale][$translation->getDomain()][$translation->getToken()] = $translation;
+                    self::$catalogue[$locale][$translation->getDomain()][$translation->getToken()] = $translation;
                 }
             }
         }

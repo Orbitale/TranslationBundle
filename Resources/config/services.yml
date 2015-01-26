@@ -16,7 +16,7 @@ services:
 
     pierstoval.translation.extractor:
         class: %pierstoval_translation.extractor.class%
-        arguments: 
+        arguments:
             - @doctrine.orm.entity_manager
             - @translation.writer
             - %kernel.root_dir%
