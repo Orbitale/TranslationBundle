@@ -30,6 +30,12 @@ class PierstovalTranslationExtension extends Extension
 
         if (isset($config['locales']) && !empty($config['locales'])) {
             $config['locales'] = $this->processLocales($container, $config['locales']);
+        } else {
+            $config['locales'] = $container->getParameter('locales');
+            $containerLocale = $container->getParameter('locale');
+            if ($containerLocale && isset($config['locales'][$containerLocale])) {
+                $config['locales'] = array($containerLocale => $config['locales'][$containerLocale]);
+            }
         }
 
         if ($config['use_sonata']) {
