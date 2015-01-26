@@ -5,13 +5,6 @@
     "homepage": "https://github.com/Pierstoval/TranslationBundle/",
     "type": "symfony-bundle",
     "license": "MIT",
-    "authors": [
-        {
-            "name": "Alex Pierstoval",
-            "email": "pierstoval@gmail.com",
-            "homepage": "http://www.pierstoval.com/"
-        }
-    ],
     "require": {
         "php": ">=5.3.3",
         "symfony/symfony": ">=2.4,<3",
@@ -20,8 +13,16 @@
     "suggest": {
         "sonata-project/admin-bundle": "Useful to add an Admin interface to manage your translations with SonataAdminBundle"
     },
-    "minimum-stability": "stable",
     "autoload": {
-        "psr-0": {"Pierstoval": "src/"}
-    }
+        "psr-4": {
+            "Pierstoval\\Bundle\\TranslationBundleBundle\\": ""
+        }
+    },
+    "authors": [
+        {
+            "name": "Alex Pierstoval",
+            "email": "pierstoval@gmail.com",
+            "homepage": "http://www.pierstoval.com/"
+        }
+    ]
 }
