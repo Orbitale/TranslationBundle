@@ -12,8 +12,8 @@ Installation
 
 Just write this command line instruction if Composer is installed in your Symfony root directory :
 
-```bash
-php composer.phar require pierstoval/translation-bundle dev-master
+```sh
+composer require pierstoval/translation-bundle
 ```
 
 I recommend to use Composer, as it is the best way to keep this repository update on your application.
@@ -43,14 +43,18 @@ You need to initiate some settings to make sure the bundle is configured properl
     ```bash
     php app/console doctrine:schema:update --force
     ```
-    
-    Or if you are using Symfony3 directory structure :
 
-    ```bash
-    php bin/console doctrine:schema:update --force
-    ```
+4. Enable the translator in the framework:
 
-3. Done !
+	```yml
+	# app/config/config.yml
+	framework:
+	    translator:      { fallback: "%locale%" } # Un-comment this line to enable the translator
+	```
+
+5. (optional) If it's not done already by composer, install the assets with `php app/console assets:install --symlink`
+
+6. Done !
 
 Usage
 -------------------------
@@ -68,7 +72,7 @@ You can manage translations in three different ways :
 
 1. **Using the Pierstoval's `TranslationController`**
 
-    You'll just load the internal controller by injecting our routes into your app, and get access to our translation manager.
+    You'll just load the internal controller by injecting our routes into your app, and get access to our translation manager. See "Admin Panel" first section for more informations.
     
 2. **Connecting to your `SonataAdminBundle` configuration**
 
@@ -110,14 +114,15 @@ There are four routes usable by the **PierstovalTranslationBundle** controller :
 
 #### Admin
 + **Admin panel index** :
-    `/%prefix%/translations/` , Shows a list of all elements found in the database, sorted by ***locale*** and ***translation domains***. A tiny count system allows you to directly have a view on how many elements are translated or not. If **Twitter's Bootstrap** is enabled, the counts will use badges and have three different colors : red if no element is translated, orange if some elements are translated but not all, and green if all elements are translated.
+    `/%prefix%/translations/` , Shows a list of all elements found in the database, sorted by ***locale*** and ***translation domains***. A tiny count system allows you to directly have a view on how many elements are translated or not. To view directly the health state of the translations, the counts will use badges and have three different colors : red if no element is translated, orange if some elements are translated but not all, and green if all elements are translated.
 
 + **Admin panel edition** :
-    `/%prefix%/translations/{locale}/{domain}` , With a little Javascript, it can save your translations in the database. If **jQuery** is enabled, you can save the datas with an AJAX request ; and if **Twitter's Bootstrap** is enabled, a little javascript tooltip will appear showing you if the translation has succeded.
+    `/%prefix%/translations/{locale}/{domain}` , With a little Javascript, it can save your translations in the database. You can save the datas with an AJAX request and a little tooltip will appear showing you if the translation has succeded.
 
 + **Admin panel extraction** :
     `/%prefix%/translations/export/{locale}` , *(Locale is optional)* This route allows the user to extract translations into files, in YML format, in a configurable output directory.
      **Tip :** This feature is also available in command line.
+     **Warning!** This commands overwrite your actual translations if they're located in the `app/Resources/translations` directory ! This bundle cannot (yet ?) merge the existing files with the currently extracted translations.
 
 ## Second solution : SonataAdminBundle
 
@@ -135,9 +140,10 @@ The `PierstovalTranslationExtension` class will then load a `SonataAdmin` servic
 Configuration reference
 -------------------------
 
-```yml
+```yaml
 pierstoval_translation:
     # View default_locales.yml to view all 135 supported locales !
+    # By default, it will only use the %locale% parameter
     locales: ~ 
     
     # Whether you want to use the Admin class with SonataAdminBundle
@@ -151,9 +157,20 @@ pierstoval_translation:
 ```
 
 ##### Locales :
+
+Example :
+
+```yml
+# app/config/config.yml
+pierstoval_translations:
+    locales: ~
+```
+
 By default, about 135 locales are supported. The ideal configuration for this bundle is to use the shortest syntax for locale name, for example `fr` instead of `fr_FR`, and `en` instead of `en_US` or `en_UK`.
 
-**To view supported locales, see the [default_locales.yml](src/Pierstoval/Bundle/TranslationBundle/Resources/config/default_locales.yml) file.**
+**The default value for this parameter is automatically set to `%locale%` if you have set it in your application parameters.**
+
+**To view supported locales, see the [default_locales.yml](Resources/config/default_locales.yml) file.**
 
 **Specifying the `locales` parameter in your config file totally _overrides_ the default locales.**
 
@@ -163,7 +180,7 @@ If you want to use more locales, you have three ways of doing it :
 This is the basic way, and _it is the only way to add languages that are not supported by this bundle_. But if a locale is not supported, you'd better make a pull-request or open an issue for it !
 
 2. `locales: ["fr", "en"]`
-This is basically a way to use only 2 locales in your website. This use is probably one of the best, with the 3rd way, because you just "truncate" the 135 locales into the ones you only want to use, and it allows you to use the powerful `Translator->getLangs()` method, which returns all used locales. If you were not using this method, this method would then return all 135 locales. It's useful to make a dynamic "Change language" menu : you put your languages in the configuration, then you get them from the translator, and you have both the locale and the public language name ! (in english). This is great for a dropdown menu, for example !
+This is basically a way to use only 2 locales in your website. With the 3rd way, it allows you to use the powerful `$translator->getLangs()` method, which returns all used locales. If you were not using this method, this method would then return all 135 locales. It's useful to make a dynamic "Change language" menu : you put your languages in the configuration, then you get them from the translator, and you have both the locale and the public language name ! (in english). This is great for a dropdown menu, for example !
 
 3. `locales: "fr,en,de,es"`
 With the 2nd method, it's the shortest way. The languages will only be splitted into an array and the extension will find them 
@@ -198,44 +215,6 @@ If it does, then, it just returns it.
 4. If the token exists, and if the element is already translated in the database, the translation is returned. If not, then the original expression is returned, after parsing the eventual translation parameters.
 
 5. As you may have noticed, Symfony's native translator is called ***at first***. It's simply to use Symfony's powerful **cache system**, which saves all translations inside a cached catalogue, to strongly enhance time execution and memory saving.
-
-Translations UI template
--------------------------
-
-The UI template is really not beautiful. In fact, it's completely UGLY. But it is logical : the way I will design it will be different than the way YOU will design it, so in my opinion, there is no need to make a perfect design for this UI, especially if you want it to be directly integrated to your own backoffice system. That's why I only put a basic Twitter's Bootstrap + jQuery template.
-
-So I made "template override" possible and easy for anyone, by adding a simple twig inheritance facility.
-
-To do this, simply change this parameter in your config file :
-
-```yml
-# app/config/config.yml
-pierstoval_translations:
-    admin_layout: AcmeDemoBundle:Demo:translation_layout.html.twig
-```
-
-You can choose ANY layout, even your base layout, but you must add at least three blocks in your Twig template :
-```twig
-{# AcmeDemoBundle:Demo:translation_layout.html.twig #}
-{% block translation_stylesheets %}{% endblock %}
-
-{% block translation_admin_wrapper %}
-    {% block translation_admin_body %}{% endblock %}
-{% endblock %}
-{% block translation_javascripts %}{% endblock %}
-```
-
-You can put these blocks anywhere, and when the controller will render the template for the `adminList` or the `edit` route, the template will extend your own layout (that's why these blocks are important). 
-
-You can put ANYTHING outside this inclusion, so you can render your own menus, extend your own layout, etc., this is important when you developed your own backoffice, for example.
-
-**Bonus :**
-
-* If you have included **jQuery** to your layout, a "Save" button will appear, allowing you to save only one translation at a time with an AJAX request. This is useful when you have to translate only one or two missing elements.
-
-* If you have included **Twitter's Bootstrap** (v3) CSS framework to your layout, the buttons will use the bootstrap's *btn btn-default* class, and the admin index will show colored and *bedged* counts for translated/total elements.
-
-* If you have included **Twitter's Bootstrap** (v3) JS *Tooltip* feature, as jQuery is mandatory to bootstrap, the "Save" button will activate a tooltip next to the textarea containing the translation, with an information about the saving process (successful or not) after the AJAX request.
 
 Conclusion
 -------------------------
