@@ -20,6 +20,25 @@ use Symfony\Component\Translation\TranslatorInterface;
 class Translator extends BaseTranslator implements TranslatorInterface {
 
     /**
+     * The translator will flush any new translation directly in the database.
+     * It can be good for testing but it may considerably reduce performances.
+     */
+    const FLUSH_RUNTIME = 0;
+
+    /**
+     * Optimal behavior :
+     * The translator will only flush translations when the __destruct()
+     * or flushTranslations() method are called.
+     */
+    const FLUSH_TERMINATE = 1;
+
+    /**
+     * The translator will never flush the translations automatically,
+     * unless the flushTranslations() method is called manually.
+     */
+    const FLUSH_NONE = 2;
+
+    /**
      * @var ContainerInterface
      */
     protected $container;
@@ -33,7 +52,7 @@ class Translator extends BaseTranslator implements TranslatorInterface {
      * Contains all translations which are recovered from database
      * This attribute is static because it will force the class to always
      * have the same catalogue through the all application, to avoid too many
-     * database queries.
+     * database queries to retrieve the translations.
      * @var array
      */
     protected static $catalogue = array();
@@ -48,13 +67,21 @@ class Translator extends BaseTranslator implements TranslatorInterface {
      * @var bool
      */
     protected $hasToBeFlushed = false;
+
     /**
      * @var bool
      */
     protected $flushed = false;
 
-    /** @var EntityManager $_em */
+    /**
+     * @var EntityManager $_em
+     */
     protected $_em;
+
+    /**
+     * @var int
+     */
+    protected $flushStrategy = self::FLUSH_TERMINATE;
 
     /**
      * @param ContainerInterface $container
@@ -68,6 +95,24 @@ class Translator extends BaseTranslator implements TranslatorInterface {
         $this->selector = $selector ?: new MessageSelector();
 
         $this->_em = $this->container->get('doctrine')->getManager();
+    }
+
+    /**
+     * @param integer $instantFlush
+     * @return $this
+     */
+    public function setFlushStrategy($instantFlush = self::FLUSH_TERMINATE)
+    {
+        $this->flushStrategy = $instantFlush;
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getFlushStrategy()
+    {
+        return $this->flushStrategy;
     }
 
     /**
@@ -110,7 +155,9 @@ class Translator extends BaseTranslator implements TranslatorInterface {
      * This allows flushing even when there is any kind of error, or when the listener is not triggered.
      */
     public function __destruct(){
-        $this->flushTranslations();
+        if ($this->flushStrategy === self::FLUSH_TERMINATE) {
+            $this->flushTranslations();
+        }
     }
 
     /**
@@ -156,12 +203,15 @@ class Translator extends BaseTranslator implements TranslatorInterface {
      * Finds a translation, first, in the native catalogue.
      * Then, searches for it in the database.
      * If the element is still not found, it will persist a new "dirty" Translation object in the database.
-     * @param mixed $id
+     *
+     * @param mixed  $id
      * @param string $domain
      * @param string $locale
+     *
      * @return string
+     * @throws \Exception
      */
-    protected function getTranslation($id, $domain, $locale)
+    protected function getTranslation($id, $domain = null, $locale = null)
     {
         if (
             !$id
@@ -175,6 +225,11 @@ class Translator extends BaseTranslator implements TranslatorInterface {
 
         if (null === $locale) {
             $locale = $this->getLocale();
+            if (null === $locale && !count($this->getFallbackLocales())) {
+                throw new \Exception('Could not retrieve any locale from the translator.');
+            } else {
+                $locale = $this->getFallbackLocales()[0];
+            }
         } else {
             $this->assertValidLocale($locale);
         }
@@ -206,8 +261,13 @@ class Translator extends BaseTranslator implements TranslatorInterface {
                     ->setSource($id)
                     ->setDomain($domain)
                     ->setLocale($locale);
-                $this->hasToBeFlushed = true;
-                $this->translationsToPersist[] = $translation;
+                if ($this->flushStrategy === self::FLUSH_TERMINATE || $this->flushStrategy === self::FLUSH_NONE) {
+                    $this->hasToBeFlushed = true;
+                    $this->translationsToPersist[] = $translation;
+                } elseif ($this->flushStrategy === self::FLUSH_RUNTIME) {
+                    $this->_em->persist($translation);
+                    $this->_em->flush($translation);
+                }
                 self::$catalogue[$locale][$domain][$token] = $translation;
                 $translation = $id;
             }
