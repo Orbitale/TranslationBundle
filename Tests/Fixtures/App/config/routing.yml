@@ -1,0 +1,3 @@
+
+pierstoval_translation:
+    resource: "@PierstovalTranslationBundle/Resources/config/routing.yml"
