@@ -3,6 +3,8 @@ namespace Pierstoval\Bundle\TranslationBundle\Translation;
 
 
 use Doctrine\ORM\EntityManager;
+use Pierstoval\Bundle\TranslationBundle\Entity\Translation;
+use Pierstoval\Bundle\TranslationBundle\Repository\TranslationRepository;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Translation\Catalogue\MergeOperation;
 use Symfony\Component\Translation\MessageCatalogue;
@@ -21,6 +23,10 @@ class Extractor {
     private $cache_dir;
     private $cli = false;// Used to check if service is called from command line
     private $dir_checked = false;
+
+    /**
+     * @var OutputInterface
+     */
     private $cli_output;
 
     /** @var TranslationWriter */
@@ -34,12 +40,61 @@ class Extractor {
         $this->configured_dir = $configured_dir;
     }
 
+    /**
+     * Specifies that the extractor is used in CLI.
+     * It will allow the extractor to log some informations directly in console.
+     *
+     * @param OutputInterface $output
+     */
     public function cli(OutputInterface $output) {
         $this->cli = true;
         $this->cli_output = $output;
     }
 
+    /**
+     * Extracts the specified locale in translation files.
+     *
+     * @param string $locale          The locale to be extracted
+     * @param string $outputFormat    The output format. Must follow Symfony's native translation formats.
+     * @param string $outputDirectory The directory where to store the translation files
+     * @param bool   $keepFiles       If true, will not erase already existing files.
+     * @param bool   $dirty           If true, will extract all ids that do not have a proper translation (null or empty)
+     *
+     * @return bool True if extraction succeeds, false instead.
+     * @throws \Exception
+     */
     public function extract($locale, $outputFormat = 'yml', $outputDirectory = '', $keepFiles = false, $dirty = false) {
+
+        if ($this->cli) {
+            $output = $this->cli_output;
+        } else {
+            $output = null;
+        }
+        try {
+            $returnDatas = $this->doExtract($locale, $outputFormat, $outputDirectory, $keepFiles, $dirty);
+        } catch (\Exception $e) {
+            if ($output) {
+                $output->writeln('<error>'.$e->getMessage().'</error>');
+            } else {
+                throw $e;
+            }
+            $returnDatas = false;
+        }
+
+        return $returnDatas;
+    }
+
+    /**
+     * @param string $locale
+     * @param string $outputFormat
+     * @param string $outputDirectory
+     * @param bool   $keepFiles
+     * @param bool   $dirty
+     *
+     * @return bool
+     * @throws \Exception
+     */
+    private function doExtract($locale, $outputFormat = 'yml', $outputDirectory = '', $keepFiles = false, $dirty = false) {
 
         if (!$this->dir_checked || !$outputDirectory) {
             $this->checkOutputDir($outputDirectory, false);
@@ -49,6 +104,9 @@ class Extractor {
         if ($cli) {
             $output = $this->cli_output;
             $verbosity = $output->getVerbosity();
+        } else {
+            $output = null;
+            $verbosity = null;
         }
 
         // check format
@@ -60,15 +118,16 @@ class Extractor {
             } else {
                 throw new \Exception('Wrong output format. Supported formats are '.implode(', ', $supportedFormats).'.');
             }
-            return false;
         }
 
+        /** @var TranslationRepository $repo */
         $repo = $this->em->getRepository('PierstovalTranslationBundle:Translation');
 
         $catalogue = new MessageCatalogue($locale);
 
         if ($cli && 2 < $verbosity) { $output->writeln('Retrieving elements from database...');}
 
+        /** @var Translation[] $datas */
         $datas = $repo->findBy(array('locale'=>$locale));
 
         $dirty_elements = 0;
@@ -132,6 +191,15 @@ class Extractor {
         return true;
     }
 
+    /**
+     * Will check if the output directory exists, and create it recursively if not.
+     * As $outputDirectory is passed as reference, it will fix any trimming directory separator on it.
+     *
+     * @param string $outputDirectory
+     * @param bool $return_info
+     *
+     * @return $this|string
+     */
     public function checkOutputDir(&$outputDirectory, $return_info = false) {
         $config_param = $this->configured_dir;
 
