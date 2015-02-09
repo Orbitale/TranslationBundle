@@ -235,9 +235,6 @@ class Translator extends BaseTranslator implements TranslatorInterface {
                 throw new \Exception('Could not retrieve any locale from the translator.');
             } else {
                 $fallbackLocales = $this->getFallbackLocales();
-                if (!count($fallbackLocales)) {
-                    throw new \Exception('No fallback locale has been found. Have you set up your translation configuration correctly ?');
-                }
                 $locale = $fallbackLocales[0];
             }
         } else {
