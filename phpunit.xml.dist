@@ -22,4 +22,10 @@
         <server name="KERNEL_DIR" value="./Tests/Fixtures/App" />
     </php>
 
+    <filter>
+        <blacklist>
+            <directory>./vendor</directory>
+            <directory>./Tests</directory>
+        </blacklist>
+    </filter>
 </phpunit>
