@@ -1,4 +1,5 @@
 [![SensioLabsInsight](https://insight.sensiolabs.com/projects/79130396-6820-46ba-9412-5e3c29429845/big.png)](https://insight.sensiolabs.com/projects/79130396-6820-46ba-9412-5e3c29429845)
+[![Build Status](https://travis-ci.org/Pierstoval/TranslationBundle.svg?branch=master)](https://travis-ci.org/Pierstoval/TranslationBundle)
 
 Pierstoval TranslationBundle
 ==================
