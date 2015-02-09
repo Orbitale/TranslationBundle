@@ -228,7 +228,11 @@ class Translator extends BaseTranslator implements TranslatorInterface {
             if (null === $locale && !count($this->getFallbackLocales())) {
                 throw new \Exception('Could not retrieve any locale from the translator.');
             } else {
-                $locale = $this->getFallbackLocales()[0];
+                $fallbackLocales = $this->getFallbackLocales();
+                if (!count($fallbackLocales)) {
+                    throw new \Exception('No fallback locale has been found. Have you set up your translation configuration correctly ?');
+                }
+                $locale = $fallbackLocales[0];
             }
         } else {
             $this->assertValidLocale($locale);
