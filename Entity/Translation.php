@@ -211,7 +211,7 @@ class Translation
      * @return $this
      */
     public function removeTranslationLike(Translation $translation) {
-        $this->translationsLike->remove($translation);
+        $this->translationsLike->removeElement($translation);
         return $this;
     }
 
