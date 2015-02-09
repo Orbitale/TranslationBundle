@@ -290,14 +290,16 @@ class Translator extends BaseTranslator implements TranslatorInterface {
      */
     public function findToken($token) {
         $catalogue = self::$catalogue;
+        $translation = null;
         foreach ($catalogue as $locale_catalogue) {
             foreach ($locale_catalogue as $domain_catalogue) {
                 if (isset($domain_catalogue[$token])) {
-                    return $domain_catalogue[$token];
+                    $translation = $domain_catalogue[$token];
+                    break;
                 }
             }
         }
-        return null;
+        return $translation;
     }
 
     /**
