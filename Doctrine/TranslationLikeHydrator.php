@@ -21,11 +21,7 @@ class TranslationLikeHydrator extends AbstractHydrator {
 
         // Looping all the rows
         while ($row = $this->_stmt->fetch(PDO::FETCH_ASSOC)) {
-            if (isset($results[$row['id0']])) {
-                $result = $results[$row['id0']];
-            } else {
-                $result = new Translation();
-            }
+            $result = new Translation();
             $like = new Translation();
             foreach ($owners as $dqlAlias => $element) {
                 // Uses reflection system to hydrate the object
@@ -57,6 +53,6 @@ class TranslationLikeHydrator extends AbstractHydrator {
             }
         }
 
-        return $results;
+        return array_values($results);
     }
 }
