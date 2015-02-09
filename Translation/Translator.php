@@ -116,13 +116,6 @@ class Translator extends BaseTranslator implements TranslatorInterface {
     }
 
     /**
-     * @see Translator::trans()
-     */
-    public function translate($id, array $parameters = array(), $domain = null, $locale = null) {
-        return $this->trans($id, $parameters, $domain, $locale);
-    }
-
-    /**
      * Returns an array with locales.
      * Keys = locales
      * Values = public languages names
