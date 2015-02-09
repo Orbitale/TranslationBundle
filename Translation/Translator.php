@@ -126,6 +126,15 @@ class Translator extends BaseTranslator implements TranslatorInterface {
     }
 
     /**
+     * @return $this
+     */
+    public function emptyCatalogue()
+    {
+        self::$catalogue = array();
+        return $this;
+    }
+
+    /**
      * Persists all translations in the $translationsToPersist attribute,
      * then flushes the manager and clears all translations to be persisted
      * @return $this
