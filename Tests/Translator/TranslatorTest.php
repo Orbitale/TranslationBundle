@@ -61,4 +61,25 @@ class TranslatorTest extends AbstractTestCase
         );
     }
 
+    /**
+     * @dataProvider provideTranschoice
+     *
+     * @param string $source
+     * @param string $expected
+     * @param integer $number
+     */
+    public function testTranschoice($source, $expected, $number)
+    {
+        $this->assertEquals($this->translator->transChoice($source, $number), $expected);
+    }
+
+    public function provideTranschoice()
+    {
+        $str1 = '{0} There is no apples|{1} There is one apple|]1,Inf] There are %count% apples';
+        return array(
+            array($str1, 'There is no apples', 0),
+            array($str1, 'There is one apple', 1),
+            array($str1, 'There are 2 apples', 2),
+        );
+    }
 }
