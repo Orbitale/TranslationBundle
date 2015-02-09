@@ -103,7 +103,7 @@ class TranslationRepository extends EntityRepository {
      *
      * @param null|string $locale
      * @param null|string $domain
-     * @return array
+     * @return Translation[]
      * @see Pierstoval\Bundle\TranslationBundle\Doctrine\TranslationLikeHydrator
      */
     public function findLikes($locale = null, $domain = null) {
