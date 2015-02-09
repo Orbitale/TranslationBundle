@@ -187,6 +187,10 @@ class Translator extends BaseTranslator implements TranslatorInterface {
      */
     public function transChoice($id, $number, array $parameters = array(), $domain = null, $locale = null) {
 
+        if (!isset($parameters['%count%'])) {
+            $parameters['%count%'] = $number;
+        }
+
         $translation = $this->getTranslation($id, $domain, $locale);
 
         return strtr($this->selector->choose($translation, (int) $number, $locale), $parameters);
