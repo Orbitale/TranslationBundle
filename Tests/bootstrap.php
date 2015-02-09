@@ -20,8 +20,10 @@ $autoload = require_once $file;
 
 AnnotationRegistry::registerFile(__DIR__.'/../vendor/doctrine/orm/lib/Doctrine/ORM/Mapping/Driver/DoctrineAnnotations.php');
 
-if (file_exists(__DIR__.'/../vendor/pierstoval_translation_test.db')) {
-    unlink(__DIR__.'/../vendor/pierstoval_translation_test.db');
+$dbFile = __DIR__.'/../vendor/pierstoval_translation_test.db';
+
+if (file_exists($dbFile)) {
+    unlink($dbFile);
 }
 
 include __DIR__.'/Fixtures/App/AppKernel.php';
