@@ -65,7 +65,7 @@ class TranslationRepository extends EntityRepository {
      * This is used to help translating an element by providing translations that are similar but maybe in other locales.
      *
      * @param Translation $translation
-     * @return array
+     * @return Translation[]
      */
     public function findOneLikes(Translation $translation)
     {
@@ -160,6 +160,7 @@ class TranslationRepository extends EntityRepository {
      */
     public function getForAdmin()
     {
+        /** @var Translation[] $list */
         $list = $this->findAll();
 
         $translations = array();
