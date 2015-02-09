@@ -54,11 +54,6 @@ class TranslatorTest extends AbstractTestCase
         $this->em->clear();
     }
 
-    protected function generateToken($source, $domain, $locale)
-    {
-        return md5($source.'_'.$domain.'_'.$locale);
-    }
-
     public function testManualConstruct()
     {
         $exception = false;

@@ -42,4 +42,16 @@ class AbstractTestCase extends WebTestCase
         return static::$kernel;
     }
 
+    /**
+     * Generates tokens according to normally Translator behavior
+     * @param $source
+     * @param $domain
+     * @param $locale
+     * @return string
+     */
+    protected function generateToken($source, $domain, $locale)
+    {
+        return md5($source.'_'.$domain.'_'.$locale);
+    }
+
 }
