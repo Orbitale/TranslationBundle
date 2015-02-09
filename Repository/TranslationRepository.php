@@ -142,7 +142,7 @@ class TranslationRepository extends EntityRepository {
         }
 
         $dql .= "
-            ORDER BY t1.domain ASC, t1.source ASC
+            ORDER BY t1.domain ASC, t1.source ASC, t1.id ASC
         ";
 
         $config = $em->getConfiguration();
