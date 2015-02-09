@@ -56,14 +56,15 @@ class TranslatorTest extends AbstractTestCase
 
     public function testManualConstruct()
     {
-        $exception = false;
+        $exception = '';
         try {
+            $this->bootKernel();
             $translator = new Translator($this->getKernel()->getContainer(), new MessageSelector());
             $translator->__construct($this->getKernel()->getContainer(), new MessageSelector());
         } catch (\Exception $e) {
-            $exception = true;
+            $exception = $e->getMessage();
         }
-        $this->assertFalse($exception);
+        $this->assertEmpty($exception, $exception);
     }
 
     public function testLangs()
