@@ -217,7 +217,7 @@ class Translator extends BaseTranslator implements TranslatorInterface {
      * @return string
      * @throws \Exception
      */
-    protected function getTranslation($id, $domain = null, $locale = null)
+    public function getTranslation($id, $domain = null, $locale = null)
     {
         if (
             !$id
@@ -291,7 +291,7 @@ class Translator extends BaseTranslator implements TranslatorInterface {
      * @param string $token
      * @return null|Translation
      */
-    protected function findToken($token) {
+    public function findToken($token) {
         $catalogue = self::$catalogue;
         foreach ($catalogue as $locale_catalogue) {
             foreach ($locale_catalogue as $domain_catalogue) {
