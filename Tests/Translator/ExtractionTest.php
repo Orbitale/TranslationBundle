@@ -82,7 +82,9 @@ class ExtractionTest extends AbstractTestCase {
         foreach (glob($outputDirectory.'/*') as $file) {
             unlink($file);
         }
-        rmdir($outputDirectory);
+        if (is_dir($outputDirectory)) {
+            rmdir($outputDirectory);
+        }
 
         $command = new TranslationExtractCommand();
         $command->setContainer($this->getKernel()->getContainer());
