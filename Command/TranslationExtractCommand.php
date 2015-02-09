@@ -2,6 +2,7 @@
 
 namespace Pierstoval\Bundle\TranslationBundle\Command;
 
+use Pierstoval\Bundle\TranslationBundle\Translation\Extractor;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -65,6 +66,7 @@ EOF
 
         $verbosity = $output->getVerbosity();
 
+        /** @var Extractor $extractor */
         $extractor = $this->getContainer()->get('pierstoval.translation.extractor');
 
         $extractor->cli($output);
@@ -92,8 +94,10 @@ EOF
 
         if ($done) {
             $output->writeln('Done ! Thanks for using Pierstoval\'s translation tool !');
+            return 0;
         } else {
             $output->writeln('An unknown error has occurred, please check your configuration and datas.');
+            return 1;
         }
     }
 }
