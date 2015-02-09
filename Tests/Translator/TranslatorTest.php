@@ -15,6 +15,7 @@ use Pierstoval\Bundle\TranslationBundle\Entity\Translation;
 use Pierstoval\Bundle\TranslationBundle\Repository\TranslationRepository;
 use Pierstoval\Bundle\TranslationBundle\Tests\Fixtures\AbstractTestCase;
 use Pierstoval\Bundle\TranslationBundle\Translation\Translator;
+use Symfony\Component\Translation\MessageSelector;
 
 class TranslatorTest extends AbstractTestCase
 {
@@ -53,14 +54,30 @@ class TranslatorTest extends AbstractTestCase
         $this->em->clear();
     }
 
+    protected function generateToken($source, $domain, $locale)
+    {
+        return md5($source.'_'.$domain.'_'.$locale);
+    }
+
+    public function testManualConstruct()
+    {
+        $exception = false;
+        try {
+            $translator = new Translator($this->getKernel()->getContainer(), new MessageSelector());
+            $translator->__construct($this->getKernel()->getContainer(), new MessageSelector());
+        } catch (\Exception $e) {
+            $exception = true;
+        }
+        $this->assertFalse($exception);
+    }
+
+    public function testLangs()
+    {
+        $this->assertEquals(array('fr' => 'French'), $this->translator->getLangs());
+    }
+
     /**
      * @dataProvider provideTranslate
-     *
-     * @param string $source
-     * @param string $expected
-     * @param string $domain
-     * @param string $locale
-     * @param array  $params
      */
     public function testTranslate($source, $expected, $domain = null, $locale = null, $params = array())
     {
@@ -80,10 +97,6 @@ class TranslatorTest extends AbstractTestCase
 
     /**
      * @dataProvider provideTranschoice
-     *
-     * @param string $source
-     * @param string $expected
-     * @param integer $number
      */
     public function testTranschoice($source, $expected, $number)
     {
@@ -105,14 +118,6 @@ class TranslatorTest extends AbstractTestCase
 
     /**
      * @dataProvider provideEntities
-     *
-     * @param string $source
-     * @param array $parameters
-     * @param string $locale
-     * @param string $domain
-     * @param string $translation
-     * @param string $expected
-     * @param boolean $transChoice
      */
     public function testEntities($source, $parameters, $locale, $domain, $translation, $expected, $transChoice = false)
     {
@@ -123,7 +128,7 @@ class TranslatorTest extends AbstractTestCase
             $this->translator->trans($source, $parameters, $domain, $locale);
         }
 
-        $token = md5($source.'_'.$domain.'_'.$locale);
+        $token = $this->generateToken($source, $domain, $locale);
 
         /** @var TranslationRepository $repo */
         $repo = $this->em->getRepository('PierstovalTranslationBundle:Translation');
@@ -199,7 +204,39 @@ class TranslatorTest extends AbstractTestCase
         $firstResult = current($tokens);
 
         $this->assertEquals($firstResult->getToken(), $translation->getToken());
+    }
 
+    public function testManualInsertion()
+    {
+        if ($this->translator->getFlushStrategy() !== Translator::FLUSH_NONE) {
+            $this->translator->setFlushStrategy(Translator::FLUSH_NONE);
+        }
+
+        $this->translator->trans('test', array(), 'messages', 'fr');
+
+        $token = $this->generateToken('test', 'messages', 'fr');
+
+        /** @var TranslationRepository $repo */
+        $repo = $this->em->getRepository('PierstovalTranslationBundle:Translation');
+
+        $this->translator->flushTranslations();
+
+        $dbToken = $repo->findOneBy(array('token' => $token));
+        $this->assertNotNull($dbToken);
+
+        $this->assertEquals($dbToken->getToken(), $token);
+
+        $dbToken->setTranslation('Translated !');
+        $this->em->persist($dbToken);
+        $this->em->flush();
+
+        // Empty catalogue to reset it automatically
+        $this->translator->emptyCatalogue();
+
+        // Searches back for the new token
+        $translation = $this->translator->trans('test', array(), 'messages', 'fr');
+
+        $this->assertEquals('Translated !', $translation);
     }
 
     public function testGetLocalesInDb()
@@ -227,7 +264,60 @@ class TranslatorTest extends AbstractTestCase
         }
     }
 
-    public function testTranslationsLike()
+    public function testDomainsInDb()
+    {
+        $domainsToSave = array('messages', 'garbage_domain', 'another_creepy_domain', 'hey_what_about', 'FOSUserBundle');
+
+        /** @var Translation[] $translations */
+        $translations = array();
+        foreach ($domainsToSave as $domain) {
+            $translation = new Translation();
+            $translation->setSource('Test '.$domain)->setDomain($domain)->setLocale('fr')->setToken('arbitrary_token_'.$domain);
+            $translations[] = $translation;
+            $this->em->persist($translation);
+        }
+
+        $this->em->flush();
+
+        /** @var TranslationRepository $repo */
+        $repo = $this->em->getRepository('PierstovalTranslationBundle:Translation');
+
+        $domains = $repo->getDomains();
+
+        foreach ($domainsToSave as $domain) {
+            $this->assertEquals(true, in_array($domain, $domains));
+        }
+    }
+
+    public function testTranslationsLikeOne()
+    {
+        $translation1 = new Translation();
+        $translation1->setSource('Translation likes only one')->setLocale('fr')->setDomain('messages')->setToken('arbitrary_token_fr')->setTranslation('Test traductions similaires unitaires');
+        $this->em->persist($translation1);
+
+        $translation2 = new Translation();
+        $translation2->setSource('Translation likes only one')->setLocale('en')->setDomain('messages')->setToken('arbitrary_token_en');
+        $this->em->persist($translation2);
+
+        $this->em->flush();
+
+        /** @var TranslationRepository $repo */
+        $repo = $this->em->getRepository('PierstovalTranslationBundle:Translation');
+
+        $likes = $repo->findOneLikes($translation1);
+        $this->assertNotNull($likes);
+        $this->assertCount(2, $likes);
+        $number = 0;
+        foreach ($likes as $like) {
+            $number += preg_match('~'.$like->getSource().'~isUu',       $translation1->getSource());
+            $number += preg_match('~'.$like->getTranslation().'~isUu',  $translation1->getSource());
+            $number += preg_match('~'.$like->getSource().'~isUu',       $translation1->getTranslation());
+            $number += preg_match('~'.$like->getTranslation().'~isUu',  $translation1->getTranslation());
+        }
+        $this->assertGreaterThan(0, $number);
+    }
+
+    public function testTranslationsLikeRaw()
     {
         $translation1 = new Translation();
         $translation1->setSource('Translation likes test')->setLocale('fr')->setDomain('messages')->setToken('arbitrary_token_fr')->setTranslation('Test traductions similaires');
@@ -243,20 +333,118 @@ class TranslatorTest extends AbstractTestCase
         $repo = $this->em->getRepository('PierstovalTranslationBundle:Translation');
 
         $likes = $repo->findLikes();
-
         $this->assertNotEmpty($likes);
         $this->assertCount(2, $likes);
-
         $translation = $likes[0];
         $firstLikes = $translation->getTranslationsLike();
-
         $this->assertCount(1, $firstLikes);
         $this->assertEquals($translation2->getId(), $firstLikes[0]->getId());
-
         foreach ($firstLikes as $like) {
             $translation->removeTranslationLike($like);
         }
         $this->assertEmpty($translation->getTranslationsLike());
+
+    }
+
+    public function testTranslationLikesLocale()
+    {
+        $translation1 = new Translation();
+        $translation1->setSource('Translation likes locale test')->setLocale('fr')->setDomain('messages')->setToken('arbitrary_token_fr')->setTranslation('Test traductions similaires par locale');
+        $this->em->persist($translation1);
+
+        $translation2 = new Translation();
+        $translation2->setSource('Translation likes locale test')->setLocale('en')->setDomain('messages')->setToken('arbitrary_token_en');
+        $this->em->persist($translation2);
+
+        $this->em->flush();
+
+        /** @var TranslationRepository $repo */
+        $repo = $this->em->getRepository('PierstovalTranslationBundle:Translation');
+
+        $likesFR = $repo->findLikes('fr');
+        $this->assertNotEmpty($likesFR);
+        $this->assertCount(1, $likesFR);
+        $translation = $likesFR[0];
+        $firstLikes = $translation->getTranslationsLike();
+        $this->assertCount(1, $firstLikes);
+        $this->assertEquals($translation2->getId(), $firstLikes[0]->getId());
+        foreach ($firstLikes as $like) {
+            $translation->removeTranslationLike($like);
+        }
+        $this->assertEmpty($translation->getTranslationsLike());
+    }
+
+    public function testTranslationsLikeDomain()
+    {
+        $translation1 = new Translation();
+        $translation1->setSource('Translation likes domain test')->setLocale('fr')->setDomain('messages')->setToken('arbitrary_token_fr')->setTranslation('Test traductions similaires par domaine');
+        $this->em->persist($translation1);
+
+        $translation2 = new Translation();
+        $translation2->setSource('Translation likes domain test')->setLocale('en')->setDomain('messages')->setToken('arbitrary_token_en');
+        $this->em->persist($translation2);
+
+        $this->em->flush();
+
+        /** @var TranslationRepository $repo */
+        $repo = $this->em->getRepository('PierstovalTranslationBundle:Translation');
+
+        $likesMessages = $repo->findLikes(null, 'messages');
+        $this->assertNotEmpty($likesMessages);
+        $this->assertCount(2, $likesMessages);
+        $translation = $likesMessages[0];
+        $firstLikes = $translation->getTranslationsLike();
+        $this->assertCount(1, $firstLikes);
+        $this->assertEquals($translation2->getId(), $firstLikes[0]->getId());
+        foreach ($firstLikes as $like) {
+            $translation->removeTranslationLike($like);
+        }
+        $this->assertEmpty($translation->getTranslationsLike());
+    }
+
+    public function testDestructFlush()
+    {
+        $this->bootKernel();
+        $translator = new Translator($this->getKernel()->getContainer(), new MessageSelector());
+        $translator->emptyCatalogue();
+        $translator->setFlushStrategy(Translator::FLUSH_TERMINATE);
+
+        $translator->trans('test', array(), 'messages', 'fr');
+        $token = $this->generateToken('test', 'messages', 'fr');
+
+        $translation = $this->em->getRepository('PierstovalTranslationBundle:Translation')->findOneBy(array('token' => $token));
+        $this->assertNull($translation);
+
+        // Triggers the translator's __destruct() method
+        unset($translator);
+
+        $translation = $this->em->getRepository('PierstovalTranslationBundle:Translation')->findOneBy(array('token' => $token));
+        $this->assertNotNull($translation);
+    }
+
+    public function testSomeEmptyValues()
+    {
+        $this->assertNull($this->translator->findToken('Arbitrary_empty_token'));
+
+        $thisIsEmpty = 'this shall be empty';
+        $this->translator->trans($thisIsEmpty);
+
+        // Calling trans() twice to trigger some specific behavior in the translator,
+        // which retrieves the id when there is no translation in the object.
+        $this->assertEquals($thisIsEmpty, $this->translator->trans($thisIsEmpty));
+    }
+
+    public function testSomeExceptions()
+    {
+        $this->translator->setFallbackLocales(array());
+
+        $exception = false;
+        try {
+            $this->translator->getTranslation('test with no fallback locale');
+        } catch (\Exception $e) {
+            $exception = $e->getMessage();
+        }
+        $this->assertEquals('Could not retrieve any locale from the translator.', $exception);
     }
 
 }
