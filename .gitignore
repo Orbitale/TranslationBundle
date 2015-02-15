@@ -1,3 +1,4 @@
 vendor/
 test/
 bin/
+composer.lock
