@@ -74,6 +74,8 @@ class ExtractionTest extends AbstractTestCase {
 
     public function testSuccessfulExtractionCommand()
     {
+        static::bootKernel();
+
         $dummyDatas = $this->processDummyDatas();
 
         $outputDirectory = $this->getKernel()->getContainer()->getParameter('kernel.root_dir').'/../../../vendor/_translations/';
