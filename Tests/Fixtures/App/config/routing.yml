@@ -1,3 +1,8 @@
 
-pierstoval_translation:
-    resource: "@PierstovalTranslationBundle/Resources/config/routing.yml"
+pierstoval_translation_front:
+    resource: "@PierstovalTranslationBundle/Resources/config/routing_front.yml"
+    prefix: /
+
+pierstoval_translation_admin:
+    resource: "@PierstovalTranslationBundle/Resources/config/routing_admin.yml"
+    prefix: /admin/

@@ -4,10 +4,10 @@ parameters:
 
 framework:
     secret:          secret
-    test: ~
+    test:            ~
     translator:      { fallback: %locale% }
     default_locale:  %locale%
-    router:          { resource: "%kernel.root_dir%/routing.yml" }
+    router:          { resource: "%kernel.root_dir%/config/routing.yml" }
     form:            true
     csrf_protection: true
     validation:      { enable_annotations: true }
