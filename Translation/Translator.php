@@ -49,6 +49,11 @@ class Translator extends BaseTranslator implements TranslatorInterface {
     protected $translationsToPersist;
 
     /**
+     * @var string
+     */
+    protected $locale;
+
+    /**
      * Contains all translations which are recovered from database
      * This attribute is static because it will force the class to always
      * have the same catalogue through the all application, to avoid too many
