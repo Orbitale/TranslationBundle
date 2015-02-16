@@ -23,25 +23,23 @@ class TranslationControllerTest extends AbstractTestCase {
     {
         $client = static::createClient();
 
-        /** @var Router $urlGenerator */
-        $urlGenerator = $client->getContainer()->get('router');
-
         $crawler = $client->request("GET", '/admin/translations/');
 
         $exportLink = $crawler->filter('div.container > h1 + a');
         $translationsContainer = $crawler->filter('div.container .row > div.alert');
 
         $this->assertContains('alert-danger', $translationsContainer->attr('class'));
-        $this->assertEquals($urlGenerator->generate('pierstoval_translation_export', array(), UrlGenerator::ABSOLUTE_URL), $exportLink->attr('href'));
+        $this->assertContains('/admin/translations/export', $exportLink->attr('href'));
         $this->assertGreaterThan(0, $exportLink->count());
 
         $crawler->clear();
         $crawler = $client->click($exportLink->link('GET'));
 
-        $refreshLink = $urlGenerator->generate('pierstoval_translation_adminlist', array(), UrlGenerator::ABSOLUTE_PATH);
+        $refreshLink = '/admin/translations';
         $this->assertContains('Redirecting to '.$refreshLink, $crawler->html());
 
         $crawler->clear();
+        unset($crawler, $refreshLink, $client, $exportLink);
     }
 
     public function testTranslationListAndEdit()
@@ -93,11 +91,8 @@ class TranslationControllerTest extends AbstractTestCase {
 
         $form['translation['.$token.']'] = 'translated_element';
         $crawler->clear();
-        $crawler = $client->submit($form);
-
-        $this->assertContains($translator->trans('translations_saved_count', array('%count%' => 1), 'pierstoval_translation', 'fr'), $crawler->html());
-
-        $crawler->clear();
+        unset($translator);
+        unset($crawler);
     }
 
 }

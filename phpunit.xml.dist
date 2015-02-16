@@ -23,9 +23,29 @@
     </php>
 
     <filter>
+        <whitelist processUncoveredFilesFromWhitelist="true">
+            <directory suffix=".php">./Command</directory>
+            <directory suffix=".php">./Controller</directory>
+            <directory suffix=".php">./DependencyInjection</directory>
+            <directory suffix=".php">./Doctrine</directory>
+            <directory suffix=".php">./Entity</directory>
+            <directory suffix=".php">./Listeners</directory>
+            <directory suffix=".php">./Repository</directory>
+            <directory suffix=".php">./Resources</directory>
+            <directory suffix=".php">./Translation</directory>
+            <directory suffix=".php">./Twig</directory>
+            <exclude>
+                <directory>./Admin</directory>
+                <directory>./build</directory>
+                <directory>./Tests</directory>
+                <directory>./vendor</directory>
+            </exclude>
+        </whitelist>
         <blacklist>
+            <directory>./Admin</directory>
             <directory>./vendor</directory>
             <directory>./Tests</directory>
+            <directory>./build</directory>
         </blacklist>
     </filter>
 </phpunit>
