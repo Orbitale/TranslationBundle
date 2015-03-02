@@ -38,10 +38,10 @@ class TranslationAdmin extends Admin {
 
     protected function configureDatagridFilters(DatagridMapper $datagridMapper) {
 
-        $domains = $this->getConfigurationPool()->getContainer()->get('doctrine')->getRepository(Translation::class)->getDomains();
+        $domains = $this->getConfigurationPool()->getContainer()->get('doctrine')->getRepository('Pierstoval\Bundle\TranslationBundle\Entity\Translation')->getDomains();
         $domains = array_combine($domains, $domains);
 
-        $locales = $this->getConfigurationPool()->getContainer()->get('doctrine')->getRepository(Translation::class)->getLocales();
+        $locales = $this->getConfigurationPool()->getContainer()->get('doctrine')->getRepository('Pierstoval\Bundle\TranslationBundle\Entity\Translation')->getLocales();
         $locales = array_combine($locales, $locales);
 
         $datagridMapper
