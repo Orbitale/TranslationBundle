@@ -26,7 +26,7 @@ class TranslationAdmin extends Admin {
 
         $likes = $this->modelManager->getEntityManager($subject)->getRepository(get_class($subject))->findOneLikes($subject);
 
-        $help = $this->getConfigurationPool()->getContainer()->get('templating')->render('PierstovalTranslationBundle:Translate:sonata_translations_like_help.html.twig', array('translations' => $likes));
+        $help = $this->getConfigurationPool()->getContainer()->get('templating')->render('PierstovalTranslationBundle:Translation:sonata_translations_like_help.html.twig', array('translations' => $likes));
 
         $formMapper
             ->add('locale', 'text', array('disabled'=>true))
