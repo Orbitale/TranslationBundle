@@ -12,7 +12,8 @@ namespace Orbitale\Bundle\TranslationBundle\Twig;
 
 use Orbitale\Bundle\TranslationBundle\Translation\Translator;
 
-class TranslationExtension extends \Twig_Extension {
+class TranslationExtension extends \Twig_Extension
+{
 
     /**
      * @var Translator

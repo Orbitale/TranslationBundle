@@ -13,14 +13,16 @@ namespace Orbitale\Bundle\TranslationBundle\Repository;
 use Doctrine\ORM\EntityRepository;
 use Orbitale\Bundle\TranslationBundle\Entity\Translation;
 
-class TranslationRepository extends EntityRepository {
+class TranslationRepository extends EntityRepository
+{
 
     /**
      * Get all translations with mentioned tokens
      * @param array $tokens
      * @return array
      */
-    public function findByTokens($tokens = array()) {
+    public function findByTokens($tokens = array())
+    {
         return $this->findBy(array('token' => $tokens));
     }
 
@@ -112,7 +114,8 @@ class TranslationRepository extends EntityRepository {
      * @return Translation[]
      * @see Orbitale\Bundle\TranslationBundle\Doctrine\TranslationLikeHydrator
      */
-    public function findLikes($locale = null, $domain = null) {
+    public function findLikes($locale = null, $domain = null)
+    {
 
         $em = $this->_em;
         $dql = "

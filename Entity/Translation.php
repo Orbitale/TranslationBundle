@@ -10,8 +10,8 @@
 
 namespace Orbitale\Bundle\TranslationBundle\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Table(name="orbitale_translations")
@@ -72,7 +72,8 @@ class Translation
         return $this->source;
     }
 
-    function __construct() {
+    function __construct()
+    {
         $this->translationsLike = new ArrayCollection();
     }
 
@@ -206,8 +207,10 @@ class Translation
      * @param Translation $translation
      * @return $this
      */
-    public function addTranslationLike(Translation $translation) {
+    public function addTranslationLike(Translation $translation)
+    {
         $this->translationsLike->add($translation);
+
         return $this;
     }
 
@@ -216,8 +219,10 @@ class Translation
      * @param Translation $translation
      * @return $this
      */
-    public function removeTranslationLike(Translation $translation) {
+    public function removeTranslationLike(Translation $translation)
+    {
         $this->translationsLike->removeElement($translation);
+
         return $this;
     }
 
@@ -225,7 +230,8 @@ class Translation
      * Get translations like
      * @return Translation[]
      */
-    public function getTranslationsLike(){
+    public function getTranslationsLike()
+    {
         return $this->translationsLike;
     }
 }

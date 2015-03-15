@@ -262,7 +262,13 @@ class TranslatorTest extends AbstractTestCase
 
     public function testDomainsInDb()
     {
-        $domainsToSave = array('messages', 'garbage_domain', 'another_creepy_domain', 'hey_what_about', 'FOSUserBundle');
+        $domainsToSave = array(
+            'messages',
+            'garbage_domain',
+            'another_creepy_domain',
+            'hey_what_about',
+            'FOSUserBundle'
+        );
 
         /** @var Translation[] $translations */
         $translations = array();
@@ -305,10 +311,10 @@ class TranslatorTest extends AbstractTestCase
         $this->assertCount(2, $likes);
         $number = 0;
         foreach ($likes as $like) {
-            $number += preg_match('~'.$like->getSource().'~isUu',       $translation1->getSource());
-            $number += preg_match('~'.$like->getTranslation().'~isUu',  $translation1->getSource());
-            $number += preg_match('~'.$like->getSource().'~isUu',       $translation1->getTranslation());
-            $number += preg_match('~'.$like->getTranslation().'~isUu',  $translation1->getTranslation());
+            $number += preg_match('~'.$like->getSource().'~isUu', $translation1->getSource());
+            $number += preg_match('~'.$like->getTranslation().'~isUu', $translation1->getSource());
+            $number += preg_match('~'.$like->getSource().'~isUu', $translation1->getTranslation());
+            $number += preg_match('~'.$like->getTranslation().'~isUu', $translation1->getTranslation());
         }
         $this->assertGreaterThan(0, $number);
     }

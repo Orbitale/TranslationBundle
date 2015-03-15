@@ -21,7 +21,8 @@ use Symfony\Component\Translation\Writer\TranslationWriter;
 /**
  * This service allows to extract translation data from database to files
  */
-class Extractor {
+class Extractor
+{
 
     private $em;
     private $root_dir;
@@ -51,7 +52,8 @@ class Extractor {
      *
      * @param OutputInterface $output
      */
-    public function cli(OutputInterface $output) {
+    public function cli(OutputInterface $output)
+    {
         $this->cli = true;
         $this->cli_output = $output;
     }
@@ -59,16 +61,17 @@ class Extractor {
     /**
      * Extracts the specified locale in translation files.
      *
-     * @param string $locale          The locale to be extracted
-     * @param string $outputFormat    The output format. Must follow Symfony's native translation formats.
+     * @param string $locale The locale to be extracted
+     * @param string $outputFormat The output format. Must follow Symfony's native translation formats.
      * @param string $outputDirectory The directory where to store the translation files
-     * @param bool   $keepFiles       If true, will not erase already existing files.
-     * @param bool   $dirty           If true, will extract all ids that do not have a proper translation (null or empty)
+     * @param bool $keepFiles If true, will not erase already existing files.
+     * @param bool $dirty If true, will extract all ids that do not have a proper translation (null or empty)
      *
      * @return bool True if extraction succeeds, false instead.
      * @throws \Exception
      */
-    public function extract($locale, $outputFormat = 'yml', $outputDirectory = '', $keepFiles = false, $dirty = false) {
+    public function extract($locale, $outputFormat = 'yml', $outputDirectory = '', $keepFiles = false, $dirty = false)
+    {
 
         if ($this->cli) {
             $output = $this->cli_output;
@@ -130,37 +133,45 @@ class Extractor {
 
         $catalogue = new MessageCatalogue($locale);
 
-        if ($cli && 2 < $verbosity) { $output->writeln('Retrieving elements from database...');}
+        if ($cli && 2 < $verbosity) {
+            $output->writeln('Retrieving elements from database...');
+        }
 
         /** @var Translation[] $datas */
-        $datas = $repo->findBy(array('locale'=>$locale));
+        $datas = $repo->findBy(array('locale' => $locale));
 
         $dirty_elements = 0;
         $existing_files = array();
         $overwritten_files = array();
-        if ($cli) { $output->writeln('Preparing files...'); }
+        if ($cli) {
+            $output->writeln('Preparing files...');
+        }
         foreach ($datas as $translation) {
             $domain = $translation->getDomain();
             $outputFileName = $outputDirectory.$domain.'.'.$locale.'.'.$outputFormat;
-            if (file_exists($outputFileName)) { $existing_files[$outputFileName] = $outputFileName; }
+            if (file_exists($outputFileName)) {
+                $existing_files[$outputFileName] = $outputFileName;
+            }
             if (
-                ( !$keepFiles || ($keepFiles && !file_exists($outputFileName)) )
+                (!$keepFiles || ($keepFiles && !file_exists($outputFileName)))
                 &&
-                ( $dirty || (!$dirty && $translation->getTranslation()) )
+                ($dirty || (!$dirty && $translation->getTranslation()))
             ) {
                 if (isset($existing_files[$outputFileName])) {
                     $overwritten_files[$outputFileName] = $outputFileName;
                 }
                 $catalogue->add(array($translation->getSource() => $translation->getTranslation()), $domain);
             }
-            if (!$translation->getTranslation()) { $dirty_elements ++; }
+            if (!$translation->getTranslation()) {
+                $dirty_elements++;
+            }
         }
         if ($cli && 1 < $verbosity) {
             $existing_files = count($existing_files);
             $overwritten_files = count($overwritten_files);
-            $output->writeln("\t".'<info>'.$existing_files.'</info> existing file'.($existing_files>1?'s':'').'.');
-            $output->writeln("\t".'<info>'.$overwritten_files.'</info> file'.($overwritten_files>1?'s':'').' to overwrite.');
-            $output->writeln("\t".'<info>'.$dirty_elements.'</info> "dirty" element'.($dirty_elements>1?'s':'').') '.($dirty_elements?'<comment>(Source found, but no translation)</comment>.':''));
+            $output->writeln("\t".'<info>'.$existing_files.'</info> existing file'.($existing_files > 1 ? 's' : '').'.');
+            $output->writeln("\t".'<info>'.$overwritten_files.'</info> file'.($overwritten_files > 1 ? 's' : '').' to overwrite.');
+            $output->writeln("\t".'<info>'.$dirty_elements.'</info> "dirty" element'.($dirty_elements > 1 ? 's' : '').') '.($dirty_elements ? '<comment>(Source found, but no translation)</comment>.' : ''));
         }
 
         // process catalogues
@@ -178,7 +189,9 @@ class Extractor {
 
         $env_dirs = glob($cache_dirs.'*');
 
-        if ($cli) { $output->writeln('Clearing cache catalogues...'); }
+        if ($cli) {
+            $output->writeln('Clearing cache catalogues...');
+        }
         foreach ($env_dirs as $dir) {
             if (is_dir($dir.'/translations')) {
                 $catalogues = glob($dir.'/translations/*');
@@ -205,7 +218,8 @@ class Extractor {
      *
      * @return $this|string
      */
-    public function checkOutputDir(&$outputDirectory, $return_info = false) {
+    public function checkOutputDir(&$outputDirectory, $return_info = false)
+    {
         $config_param = $this->configured_dir;
 
         if ($config_param) {
@@ -220,7 +234,7 @@ class Extractor {
         } else {
             if (!$outputDirectory) {
                 $root_dir = $this->root_dir;
-                $outputDirectory = $root_dir . '/Resources/translations/';
+                $outputDirectory = $root_dir.'/Resources/translations/';
                 $info_from = 'default';
                 if (is_dir($outputDirectory)) {
                     $info_method = 'exists';

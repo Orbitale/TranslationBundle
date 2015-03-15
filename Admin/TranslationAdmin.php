@@ -18,14 +18,16 @@ use Sonata\AdminBundle\Form\FormMapper;
 use Sonata\AdminBundle\Route\RouteCollection;
 use Sonata\DoctrineORMAdminBundle\Datagrid\ProxyQuery;
 
-class TranslationAdmin extends Admin {
+class TranslationAdmin extends Admin
+{
 
     protected function configureRoutes(RouteCollection $collection)
     {
-        $collection->clearExcept(array('list','edit'));
+        $collection->clearExcept(array('list', 'edit'));
     }
 
-    protected function configureFormFields(FormMapper $formMapper) {
+    protected function configureFormFields(FormMapper $formMapper)
+    {
 
         $subject = $this->getSubject();
 
@@ -33,17 +35,18 @@ class TranslationAdmin extends Admin {
 
         $likes = $this->modelManager->getEntityManager($subject)->getRepository(get_class($subject))->findOneLikes($subject);
 
-        $help = $this->getConfigurationPool()->getContainer()->get('templating')->render('OrbitaleTranslationBundle:Translation:sonata_translations_like_help.html.twig', array('translations' => $likes));
+        $help = $this->getConfigurationPool()->getContainer()->get('templating')->render('OrbitaleTranslationBundle:Translation:sonata_translations_like_help.html.twig',
+            array('translations' => $likes));
 
         $formMapper
-            ->add('locale', 'text', array('disabled'=>true))
-            ->add('domain', 'text', array('disabled'=>true))
-            ->add('source', 'text', array('disabled'=>true))
-            ->add('translation', 'text', array('required'=>false, 'sonata_help' => $help))
-        ;
+            ->add('locale', 'text', array('disabled' => true))
+            ->add('domain', 'text', array('disabled' => true))
+            ->add('source', 'text', array('disabled' => true))
+            ->add('translation', 'text', array('required' => false, 'sonata_help' => $help));
     }
 
-    protected function configureDatagridFilters(DatagridMapper $datagridMapper) {
+    protected function configureDatagridFilters(DatagridMapper $datagridMapper)
+    {
 
         $domains = $this->getConfigurationPool()->getContainer()->get('doctrine')->getRepository('Orbitale\Bundle\TranslationBundle\Entity\Translation')->getDomains();
         $domains = array_combine($domains, $domains);
@@ -57,24 +60,23 @@ class TranslationAdmin extends Admin {
             ->add('domain', 'doctrine_orm_string', array('field_type' => 'choice'), null, array('choices' => $domains))
             ->add('locale', 'doctrine_orm_string', array('field_type' => 'choice'), null, array('choices' => $locales))
             ->add('translation_empty', 'doctrine_orm_callback', array(
-                'callback' => function(ProxyQuery $queryBuilder, $alias, $field, $value) {
+                'callback' => function (ProxyQuery $queryBuilder, $alias, $field, $value) {
                     if (!$value['value']) {
                         return;
                     }
                     $queryBuilder->andWhere($alias.'.translation IS NULL');
                 },
                 'field_type' => 'checkbox'
-            ))
-        ;
+            ));
     }
 
-    protected function configureListFields(ListMapper $listMapper) {
+    protected function configureListFields(ListMapper $listMapper)
+    {
         $listMapper
             ->add('locale', 'text')
             ->addIdentifier('source', 'text')
             ->addIdentifier('translation', 'text')
-            ->add('domain', 'text')
-        ;
+            ->add('domain', 'text');
 
     }
 

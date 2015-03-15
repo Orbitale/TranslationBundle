@@ -14,15 +14,18 @@ use Orbitale\Bundle\TranslationBundle\Translation\Translator;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\KernelEvents;
 
-class FlushTranslations implements EventSubscriberInterface {
+class FlushTranslations implements EventSubscriberInterface
+{
 
     protected $translator;
 
-    function __construct(Translator $translator) {
+    function __construct(Translator $translator)
+    {
         $this->translator = $translator;
     }
 
-    function flushTranslations(){
+    function flushTranslations()
+    {
         $this->translator->flushTranslations();
     }
 

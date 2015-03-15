@@ -11,16 +11,17 @@
 namespace Orbitale\Bundle\TranslationBundle\Tests\Translator;
 
 use Doctrine\ORM\EntityManager;
+use Orbitale\Bundle\TranslationBundle\Command\TranslationExtractCommand;
 use Orbitale\Bundle\TranslationBundle\Entity\Translation;
 use Orbitale\Bundle\TranslationBundle\Tests\Fixtures\AbstractTestCase;
-use Orbitale\Bundle\TranslationBundle\Command\TranslationExtractCommand;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\Console\Output\NullOutput;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Yaml\Yaml;
 
-class ExtractionTest extends AbstractTestCase {
+class ExtractionTest extends AbstractTestCase
+{
 
     /**
      * @var EntityManager
@@ -49,7 +50,8 @@ class ExtractionTest extends AbstractTestCase {
     /**
      * @return Translation[]
      */
-    private function processDummyDatas(){
+    private function processDummyDatas()
+    {
         $translationsToAdd = array(
             array('first.element', 'Premier élément', 'fr', 'messages'),
             array('first.element', 'First Element', 'en', 'messages'),
@@ -69,6 +71,7 @@ class ExtractionTest extends AbstractTestCase {
             $finalTranslations[$obj->getToken()] = $obj;
         }
         $this->em->flush();
+
         return $finalTranslations;
     }
 

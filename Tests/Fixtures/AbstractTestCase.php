@@ -35,6 +35,7 @@ class AbstractTestCase extends WebTestCase
         if (!static::$kernel) {
             static::bootKernel($options);
         }
+
         return static::$kernel;
     }
 

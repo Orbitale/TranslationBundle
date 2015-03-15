@@ -27,7 +27,7 @@ class OrbitaleTranslationExtension extends Extension
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
 
-        $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
+        $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('parameters.yml');
         $loader->load('default_locales.yml');
 
@@ -46,7 +46,7 @@ class OrbitaleTranslationExtension extends Extension
         }
 
         foreach ($config as $key => $value) {
-            $container->setParameter('orbitale_translation.' . $key, $value);
+            $container->setParameter('orbitale_translation.'.$key, $value);
         }
 
         $container->setParameter('locales', $config['locales']);
@@ -80,9 +80,9 @@ class OrbitaleTranslationExtension extends Extension
                 (!is_numeric($locale) && !in_array($locale, array_keys($baseLocales)))
                 || (is_numeric($locale) && !in_array($publicName, array_keys($baseLocales)))
             ) {
-                $msg = 'An error occured when parsing configuration for Translation locales.' . "\n"
-                    . 'You specified a locale named "' . (is_numeric($locale) ? $publicName : $locale) . '" which is not registered in our supported locales.' . "\n"
-                    . 'Locale format must be the shortest, for example, you should use "en" instead of "en_US".';
+                $msg = 'An error occured when parsing configuration for Translation locales.'."\n"
+                    .'You specified a locale named "'.(is_numeric($locale) ? $publicName : $locale).'" which is not registered in our supported locales.'."\n"
+                    .'Locale format must be the shortest, for example, you should use "en" instead of "en_US".';
                 throw new InvalidArgumentException($msg);
             } else {
                 if (is_numeric($locale)) {

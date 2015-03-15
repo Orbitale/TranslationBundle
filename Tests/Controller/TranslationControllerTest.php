@@ -17,7 +17,8 @@ use Symfony\Component\DomCrawler\Form;
 use Symfony\Component\Routing\Generator\UrlGenerator;
 use Symfony\Component\Routing\Router;
 
-class TranslationControllerTest extends AbstractTestCase {
+class TranslationControllerTest extends AbstractTestCase
+{
 
     public function testAdminAndExport()
     {

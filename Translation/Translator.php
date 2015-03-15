@@ -12,13 +12,13 @@ namespace Orbitale\Bundle\TranslationBundle\Translation;
 
 use Doctrine\ORM\EntityManager;
 use Orbitale\Bundle\TranslationBundle\Entity\Translation;
-
 use Symfony\Bundle\FrameworkBundle\Translation\Translator as BaseTranslator;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Translation\MessageSelector;
 use Symfony\Component\Translation\TranslatorInterface;
 
-class Translator extends BaseTranslator implements TranslatorInterface {
+class Translator extends BaseTranslator implements TranslatorInterface
+{
 
     /**
      * The translator will flush any new translation directly in the database.
@@ -95,7 +95,8 @@ class Translator extends BaseTranslator implements TranslatorInterface {
      * @param array              $loaderIds
      * @param array              $options
      */
-    function __construct($container, MessageSelector $selector, $loaderIds = array(), array $options = array()) {
+    function __construct($container, MessageSelector $selector, $loaderIds = array(), array $options = array())
+    {
         parent::__construct($container, $selector, $loaderIds, $options);
 
         $this->selector = $selector ?: new MessageSelector();
@@ -110,6 +111,7 @@ class Translator extends BaseTranslator implements TranslatorInterface {
     public function setFlushStrategy($instantFlush = self::FLUSH_TERMINATE)
     {
         $this->flushStrategy = $instantFlush;
+
         return $this;
     }
 
@@ -127,7 +129,8 @@ class Translator extends BaseTranslator implements TranslatorInterface {
      * Values = public languages names
      * @return array
      */
-    public function getLangs() {
+    public function getLangs()
+    {
         return $this->container->getParameter('orbitale_translation.locales');
     }
 
@@ -137,6 +140,7 @@ class Translator extends BaseTranslator implements TranslatorInterface {
     public function emptyCatalogue()
     {
         self::$catalogue = array();
+
         return $this;
     }
 
@@ -145,7 +149,8 @@ class Translator extends BaseTranslator implements TranslatorInterface {
      * then flushes the manager and clears all translations to be persisted
      * @return $this
      */
-    public function flushTranslations() {
+    public function flushTranslations()
+    {
         if ($this->hasToBeFlushed && !$this->flushed) {
             foreach ($this->translationsToPersist as $translation) {
                 $this->_em->persist($translation);
@@ -155,6 +160,7 @@ class Translator extends BaseTranslator implements TranslatorInterface {
             $this->translationsToPersist = array();
             $this->flushed = true;
         }
+
         return $this;
     }
 
@@ -162,7 +168,8 @@ class Translator extends BaseTranslator implements TranslatorInterface {
      * In case of, flush is launched anytime the object is destructed.
      * This allows flushing even when there is any kind of error, or when the listener is not triggered.
      */
-    public function __destruct(){
+    public function __destruct()
+    {
         if ($this->flushStrategy === self::FLUSH_TERMINATE) {
             $this->flushTranslations();
         }
@@ -176,11 +183,13 @@ class Translator extends BaseTranslator implements TranslatorInterface {
      * @param string $domain
      * @return string|null
      */
-    public function findInNativeCatalogue($locale, $source, $domain) {
+    public function findInNativeCatalogue($locale, $source, $domain)
+    {
         if (!isset($this->catalogues[$locale])) {
             // Loads native catalogue
             $this->loadCatalogue($locale);
         }
+
         return $this->catalogues[$locale]->has($source, $domain)
             && trim($this->catalogues[$locale]->get($source, $domain))
              ? $this->catalogues[$locale]->get($source, $domain)
@@ -188,9 +197,10 @@ class Translator extends BaseTranslator implements TranslatorInterface {
     }
 
     /**
-    * {@inheritdoc}
-    */
-    public function trans($id, array $parameters = array(), $domain = null, $locale = null){
+     * {@inheritdoc}
+     */
+    public function trans($id, array $parameters = array(), $domain = null, $locale = null)
+    {
 
         $translation = $this->getTranslation($id, $domain, $locale);
 
@@ -200,7 +210,8 @@ class Translator extends BaseTranslator implements TranslatorInterface {
     /**
      * {@inheritdoc}
      */
-    public function transChoice($id, $number, array $parameters = array(), $domain = null, $locale = null) {
+    public function transChoice($id, $number, array $parameters = array(), $domain = null, $locale = null)
+    {
 
         if (!isset($parameters['%count%'])) {
             $parameters['%count%'] = $number;
@@ -208,7 +219,7 @@ class Translator extends BaseTranslator implements TranslatorInterface {
 
         $translation = $this->getTranslation($id, $domain, $locale);
 
-        return strtr($this->selector->choose($translation, (int) $number, $locale), $parameters);
+        return strtr($this->selector->choose($translation, (int)$number, $locale), $parameters);
     }
 
     /**
@@ -246,7 +257,9 @@ class Translator extends BaseTranslator implements TranslatorInterface {
         } else {
             $this->assertValidLocale($locale);
         }
-        if (!$domain) { $domain = 'messages'; }
+        if (!$domain) {
+            $domain = 'messages';
+        }
 
         // Récupère la traduction dans le catalogue de Symfony2 natif
         $translation = $this->findInNativeCatalogue($locale, $id, $domain);
@@ -294,7 +307,8 @@ class Translator extends BaseTranslator implements TranslatorInterface {
      * @param string $token
      * @return null|Translation
      */
-    public function findToken($token) {
+    public function findToken($token)
+    {
         $catalogue = self::$catalogue;
         $translation = null;
         foreach ($catalogue as $locale_catalogue) {
@@ -305,6 +319,7 @@ class Translator extends BaseTranslator implements TranslatorInterface {
                 }
             }
         }
+
         return $translation;
     }
 
@@ -313,13 +328,14 @@ class Translator extends BaseTranslator implements TranslatorInterface {
      * @param string $locale
      * @param string $domain
      */
-    protected function loadDbCatalogue($locale, $domain){
+    protected function loadDbCatalogue($locale, $domain)
+    {
         $catalogue = self::$catalogue;
 
         if (!isset($catalogue[$locale][$domain])) {
             $translations = $this->_em
                 ->getRepository('OrbitaleTranslationBundle:Translation')
-                ->findBy(array('locale'=>$locale,'domain'=>$domain));
+                ->findBy(array('locale' => $locale, 'domain' => $domain));
 
             if ($translations) {
                 foreach ($translations as $translation) {

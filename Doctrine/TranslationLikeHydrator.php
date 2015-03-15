@@ -11,17 +11,19 @@
 namespace Orbitale\Bundle\TranslationBundle\Doctrine;
 
 use Doctrine\ORM\Internal\Hydration\AbstractHydrator;
-use PDO;
 use Orbitale\Bundle\TranslationBundle\Entity\Translation;
+use PDO;
 
-class TranslationLikeHydrator extends AbstractHydrator {
+class TranslationLikeHydrator extends AbstractHydrator
+{
 
     /**
      * @var array
      */
     protected $initializedCollections;
 
-    function hydrateAllData() {
+    function hydrateAllData()
+    {
         $results = array();
 
         $owners = $this->_rsm->columnOwnerMap;
@@ -36,18 +38,18 @@ class TranslationLikeHydrator extends AbstractHydrator {
                 $value = $row[$dqlAlias];
                 $fieldName = $mapping_fields[$dqlAlias];
 
-                if ( $fieldName !== 'id' || ($fieldName == 'id' && $value) ) {
+                if ($fieldName !== 'id' || ($fieldName == 'id' && $value)) {
 
                     if ($element === 'translationsLike') {
                         // Hydrates a translation-like
-                        $refObject   = new \ReflectionObject( $like );
-                        $refProperty = $refObject->getProperty( $fieldName );
+                        $refObject = new \ReflectionObject($like);
+                        $refProperty = $refObject->getProperty($fieldName);
                         $refProperty->setAccessible(true);
                         $refProperty->setValue($like, $value);
                     } else {
                         // Hydrates a "master" translation
-                        $refObject   = new \ReflectionObject( $result );
-                        $refProperty = $refObject->getProperty( $fieldName );
+                        $refObject = new \ReflectionObject($result);
+                        $refProperty = $refObject->getProperty($fieldName);
                         $refProperty->setAccessible(true);
                         $refProperty->setValue($result, $value);
                     }
