@@ -1,8 +1,16 @@
 <?php
+/*
+* This file is part of the OrbitaleTranslationBundle package.
+*
+* (c) Alexandre Rock Ancelet <contact@orbitale.io>
+*
+* For the full copyright and license information, please view the LICENSE
+* file that was distributed with this source code.
+*/
 
-namespace Pierstoval\Bundle\TranslationBundle\Command;
+namespace Orbitale\Bundle\TranslationBundle\Command;
 
-use Pierstoval\Bundle\TranslationBundle\Translation\Extractor;
+use Orbitale\Bundle\TranslationBundle\Translation\Extractor;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -10,10 +18,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 
 /**
- * Cette commande extrait les éléments de traduction dans la BDD vers des fichiers utilisés par Symfony2
- *
- * @author Pierstoval
- * @version 1.0 24/03/2014
+ * This command extracts translation elements from database to files.
  */
 class TranslationExtractCommand extends ContainerAwareCommand
 {
@@ -23,7 +28,7 @@ class TranslationExtractCommand extends ContainerAwareCommand
     protected function configure()
     {
         $this
-            ->setName('pierstoval:translation:extract')
+            ->setName('orbitale:translation:extract')
             ->setDefinition(array(
                 new InputArgument('locale', InputArgument::REQUIRED, 'The locale'),
                 new InputOption(
@@ -67,7 +72,7 @@ EOF
         $verbosity = $output->getVerbosity();
 
         /** @var Extractor $extractor */
-        $extractor = $this->getContainer()->get('pierstoval.translation.extractor');
+        $extractor = $this->getContainer()->get('orbitale.translation.extractor');
 
         $extractor->cli($output);
 
@@ -93,7 +98,7 @@ EOF
         $done = $extractor->extract($locale, $outputFormat, $outputDirectory, $keepFiles, $dirty);
 
         if ($done) {
-            $output->writeln('Done ! Thanks for using Pierstoval\'s translation tool !');
+            $output->writeln('Done!');
             return 0;
         } else {
             $output->writeln('An unknown error has occurred, please check your configuration and datas.');

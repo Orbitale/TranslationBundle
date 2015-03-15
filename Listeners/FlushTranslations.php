@@ -1,8 +1,16 @@
 <?php
+/*
+* This file is part of the OrbitaleTranslationBundle package.
+*
+* (c) Alexandre Rock Ancelet <contact@orbitale.io>
+*
+* For the full copyright and license information, please view the LICENSE
+* file that was distributed with this source code.
+*/
 
-namespace Pierstoval\Bundle\TranslationBundle\Listeners;
+namespace Orbitale\Bundle\TranslationBundle\Listeners;
 
-use Pierstoval\Bundle\TranslationBundle\Translation\Translator;
+use Orbitale\Bundle\TranslationBundle\Translation\Translator;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\KernelEvents;
 

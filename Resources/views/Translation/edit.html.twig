@@ -1,6 +1,6 @@
 {% extends layoutToExtend %}
 
-{% trans_default_domain "pierstoval_translation" %}
+{% trans_default_domain "orbitale_translation" %}
 
 {% block title %}{{ 'title.translation_update' | trans }}{% endblock %}
 
@@ -11,8 +11,8 @@
     <h1>{{ 'title.message_translations' | trans }}</h1>
 
     <div class="alert alert-info" id="always_save_indicator">
-        <a class="btn btn-sm alert-link btn-link" href="{{ url('pierstoval_translation_adminlist') }}">&laquo; {{ 'back_to_translations_list' | trans }}</a>
-        <a class="btn btn-default" href="{{ url('pierstoval_translation_export', {"locale": locale}) }}">{{ 'export_translations_lang' | trans }}</a>
+        <a class="btn btn-sm alert-link btn-link" href="{{ url('orbitale_translation_adminlist') }}">&laquo; {{ 'back_to_translations_list' | trans }}</a>
+        <a class="btn btn-default" href="{{ url('orbitale_translation_export', {"locale": locale}) }}">{{ 'export_translations_lang' | trans }}</a>
     </div>
 
     <hr />
@@ -28,7 +28,7 @@
         {% endif %}
     {% endif %}
 
-    <form name="translate_update" id="translate_update" action="{{ url('pierstoval_translation_edit', {'domain':domain,'locale':locale}) }}" method="post">
+    <form name="translate_update" id="translate_update" action="{{ url('orbitale_translation_edit', {'domain':domain,'locale':locale}) }}" method="post">
         <fieldset>
             <input type="submit" class="btn btn-success" id="submit_updates" name="submit_updates" value="{{ 'save_modifications' | trans }}" />
             <div class="row">
@@ -80,5 +80,5 @@
     <script type="text/javascript">
         var message_replace_content = '{{ 'replace_content' | trans }}';
     </script>
-    <script type="text/javascript" src="{{ asset('bundles/pierstovaltranslation/js/translation.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('bundles/orbitaletranslation/js/translation.js') }}"></script>
 {% endblock %}

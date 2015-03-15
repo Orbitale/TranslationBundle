@@ -1,8 +1,8 @@
 <?php
 /*
-* This file is part of the PierstovalTranslationBundle package.
+* This file is part of the OrbitaleTranslationBundle package.
 *
-* (c) Alexandre "Pierstoval" Rock Ancelet <pierstoval@gmail.com>
+* (c) Alexandre Rock Ancelet <contact@orbitale.io>
 *
 * For the full copyright and license information, please view the LICENSE
 * file that was distributed with this source code.
@@ -20,7 +20,7 @@ class AppKernel extends Kernel
             new Symfony\Bundle\TwigBundle\TwigBundle(),
             new Doctrine\Bundle\DoctrineBundle\DoctrineBundle(),
             new Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle(),
-            new Pierstoval\Bundle\TranslationBundle\PierstovalTranslationBundle(),
+            new Orbitale\Bundle\TranslationBundle\OrbitaleTranslationBundle(),
         );
     }
 
@@ -44,7 +44,7 @@ class AppKernel extends Kernel
      */
     public function getCacheDir()
     {
-        return sys_get_temp_dir().'/PierstovalTranslationBundle/cache';
+        return sys_get_temp_dir().'/OrbitaleTranslationBundle/cache';
     }
 
     /**
@@ -52,6 +52,6 @@ class AppKernel extends Kernel
      */
     public function getLogDir()
     {
-        return sys_get_temp_dir().'/PierstovalTranslationBundle/logs';
+        return sys_get_temp_dir().'/OrbitaleTranslationBundle/logs';
     }
 }

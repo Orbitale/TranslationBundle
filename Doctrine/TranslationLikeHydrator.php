@@ -1,10 +1,18 @@
 <?php
+/*
+* This file is part of the OrbitaleTranslationBundle package.
+*
+* (c) Alexandre Rock Ancelet <contact@orbitale.io>
+*
+* For the full copyright and license information, please view the LICENSE
+* file that was distributed with this source code.
+*/
 
-namespace Pierstoval\Bundle\TranslationBundle\Doctrine;
+namespace Orbitale\Bundle\TranslationBundle\Doctrine;
 
 use Doctrine\ORM\Internal\Hydration\AbstractHydrator;
 use PDO;
-use Pierstoval\Bundle\TranslationBundle\Entity\Translation;
+use Orbitale\Bundle\TranslationBundle\Entity\Translation;
 
 class TranslationLikeHydrator extends AbstractHydrator {
 

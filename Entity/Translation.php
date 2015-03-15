@@ -1,15 +1,21 @@
 <?php
+/*
+* This file is part of the OrbitaleTranslationBundle package.
+*
+* (c) Alexandre Rock Ancelet <contact@orbitale.io>
+*
+* For the full copyright and license information, please view the LICENSE
+* file that was distributed with this source code.
+*/
 
-namespace Pierstoval\Bundle\TranslationBundle\Entity;
+namespace Orbitale\Bundle\TranslationBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 
 /**
- * Translation
- *
- * @ORM\Table(name="pierstoval_translations")
- * @ORM\Entity(repositoryClass="Pierstoval\Bundle\TranslationBundle\Repository\TranslationRepository")
+ * @ORM\Table(name="orbitale_translations")
+ * @ORM\Entity(repositoryClass="Orbitale\Bundle\TranslationBundle\Repository\TranslationRepository")
  */
 class Translation
 {

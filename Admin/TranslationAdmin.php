@@ -1,6 +1,14 @@
 <?php
+/*
+* This file is part of the OrbitaleTranslationBundle package.
+*
+* (c) Alexandre Rock Ancelet <contact@orbitale.io>
+*
+* For the full copyright and license information, please view the LICENSE
+* file that was distributed with this source code.
+*/
 
-namespace Pierstoval\Bundle\TranslationBundle\Admin;
+namespace Orbitale\Bundle\TranslationBundle\Admin;
 
 use Doctrine\ORM\EntityManager;
 use Sonata\AdminBundle\Admin\Admin;
@@ -25,7 +33,7 @@ class TranslationAdmin extends Admin {
 
         $likes = $this->modelManager->getEntityManager($subject)->getRepository(get_class($subject))->findOneLikes($subject);
 
-        $help = $this->getConfigurationPool()->getContainer()->get('templating')->render('PierstovalTranslationBundle:Translation:sonata_translations_like_help.html.twig', array('translations' => $likes));
+        $help = $this->getConfigurationPool()->getContainer()->get('templating')->render('OrbitaleTranslationBundle:Translation:sonata_translations_like_help.html.twig', array('translations' => $likes));
 
         $formMapper
             ->add('locale', 'text', array('disabled'=>true))
@@ -37,10 +45,10 @@ class TranslationAdmin extends Admin {
 
     protected function configureDatagridFilters(DatagridMapper $datagridMapper) {
 
-        $domains = $this->getConfigurationPool()->getContainer()->get('doctrine')->getRepository('Pierstoval\Bundle\TranslationBundle\Entity\Translation')->getDomains();
+        $domains = $this->getConfigurationPool()->getContainer()->get('doctrine')->getRepository('Orbitale\Bundle\TranslationBundle\Entity\Translation')->getDomains();
         $domains = array_combine($domains, $domains);
 
-        $locales = $this->getConfigurationPool()->getContainer()->get('doctrine')->getRepository('Pierstoval\Bundle\TranslationBundle\Entity\Translation')->getLocales();
+        $locales = $this->getConfigurationPool()->getContainer()->get('doctrine')->getRepository('Orbitale\Bundle\TranslationBundle\Entity\Translation')->getLocales();
         $locales = array_combine($locales, $locales);
 
         $datagridMapper

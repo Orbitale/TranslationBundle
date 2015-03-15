@@ -1,3 +1,3 @@
-pierstoval_translation_changelocale:
+orbitale_translation_changelocale:
     path:      /lang/{locale}
-    defaults:  { _controller: PierstovalTranslationBundle:Translation:changeLang }
+    defaults:  { _controller: OrbitaleTranslationBundle:Translation:changeLang }

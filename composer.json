@@ -1,8 +1,8 @@
 {
-    "name": "pierstoval/translation-bundle",
+    "name": "orbitale/translation-bundle",
     "description": "Adds database management for Symfony2's native translator, a db to files translations extractor, a translation catcher whenever id or source is not found, and a translation UI to manage it.",
     "keywords": ["translate", "trans", "internationalization","translation","symfony2"],
-    "homepage": "https://github.com/Pierstoval/TranslationBundle/",
+    "homepage": "https://github.com/Orbitale/TranslationBundle/",
     "type": "symfony-bundle",
     "license": "MIT",
     "require": {
@@ -22,14 +22,14 @@
     },
     "autoload": {
         "psr-4": {
-            "Pierstoval\\Bundle\\TranslationBundle\\": ""
+            "Orbitale\\Bundle\\TranslationBundle\\": ""
         }
     },
     "authors": [
         {
-            "name": "Alex Pierstoval",
-            "email": "pierstoval@gmail.com",
-            "homepage": "http://www.pierstoval.com/"
+            "name": "Alexandre Rock Ancelet",
+            "email": "alex@orbitale.io",
+            "homepage": "http://www.orbitale.io/"
         }
     ]
 }

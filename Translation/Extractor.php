@@ -1,20 +1,25 @@
 <?php
-namespace Pierstoval\Bundle\TranslationBundle\Translation;
+/*
+* This file is part of the OrbitaleTranslationBundle package.
+*
+* (c) Alexandre Rock Ancelet <contact@orbitale.io>
+*
+* For the full copyright and license information, please view the LICENSE
+* file that was distributed with this source code.
+*/
 
+namespace Orbitale\Bundle\TranslationBundle\Translation;
 
 use Doctrine\ORM\EntityManager;
-use Pierstoval\Bundle\TranslationBundle\Entity\Translation;
-use Pierstoval\Bundle\TranslationBundle\Repository\TranslationRepository;
+use Orbitale\Bundle\TranslationBundle\Entity\Translation;
+use Orbitale\Bundle\TranslationBundle\Repository\TranslationRepository;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Translation\Catalogue\MergeOperation;
 use Symfony\Component\Translation\MessageCatalogue;
 use Symfony\Component\Translation\Writer\TranslationWriter;
 
 /**
- * Service permettant l'extraction des données de traduction dans la BDD vers des fichiers utilisés par Symfony2
- *
- * @author Pierstoval
- * @version 1.0 24/03/2014
+ * This service allows to extract translation data from database to files
  */
 class Extractor {
 
@@ -121,7 +126,7 @@ class Extractor {
         }
 
         /** @var TranslationRepository $repo */
-        $repo = $this->em->getRepository('PierstovalTranslationBundle:Translation');
+        $repo = $this->em->getRepository('OrbitaleTranslationBundle:Translation');
 
         $catalogue = new MessageCatalogue($locale);
 

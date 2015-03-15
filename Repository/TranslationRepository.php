@@ -1,12 +1,18 @@
 <?php
-namespace Pierstoval\Bundle\TranslationBundle\Repository;
+/*
+* This file is part of the OrbitaleTranslationBundle package.
+*
+* (c) Alexandre Rock Ancelet <contact@orbitale.io>
+*
+* For the full copyright and license information, please view the LICENSE
+* file that was distributed with this source code.
+*/
+
+namespace Orbitale\Bundle\TranslationBundle\Repository;
 
 use Doctrine\ORM\EntityRepository;
-use Pierstoval\Bundle\TranslationBundle\Entity\Translation;
+use Orbitale\Bundle\TranslationBundle\Entity\Translation;
 
-/**
- * TranslationRepository
- */
 class TranslationRepository extends EntityRepository {
 
     /**
@@ -72,7 +78,7 @@ class TranslationRepository extends EntityRepository {
         $em = $this->_em;
         $dql = "
         SELECT translationsLike
-        FROM PierstovalTranslationBundle:Translation translationsLike
+        FROM OrbitaleTranslationBundle:Translation translationsLike
         WHERE
                translationsLike.source LIKE concat('%',:source,'%')
             OR translationsLike.translation LIKE concat('%',:source,'%')
@@ -104,15 +110,15 @@ class TranslationRepository extends EntityRepository {
      * @param null|string $locale
      * @param null|string $domain
      * @return Translation[]
-     * @see Pierstoval\Bundle\TranslationBundle\Doctrine\TranslationLikeHydrator
+     * @see Orbitale\Bundle\TranslationBundle\Doctrine\TranslationLikeHydrator
      */
     public function findLikes($locale = null, $domain = null) {
 
         $em = $this->_em;
         $dql = "
         SELECT t1, translationsLike
-            FROM PierstovalTranslationBundle:Translation t1
-            LEFT JOIN PierstovalTranslationBundle:Translation translationsLike
+            FROM OrbitaleTranslationBundle:Translation t1
+            LEFT JOIN OrbitaleTranslationBundle:Translation translationsLike
                 WITH
                     (
                         t1.source LIKE concat('%',translationsLike.source,'%')
@@ -146,7 +152,7 @@ class TranslationRepository extends EntityRepository {
         ";
 
         $config = $em->getConfiguration();
-        $config->addCustomHydrationMode('translation_like', 'Pierstoval\Bundle\TranslationBundle\Doctrine\TranslationLikeHydrator');
+        $config->addCustomHydrationMode('translation_like', 'Orbitale\Bundle\TranslationBundle\Doctrine\TranslationLikeHydrator');
 
         $query = $em->createQuery($dql);
 

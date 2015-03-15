@@ -1,20 +1,20 @@
 <?php
 /*
-* This file is part of the PierstovalTranslationBundle package.
+* This file is part of the OrbitaleTranslationBundle package.
 *
-* (c) Alexandre "Pierstoval" Rock Ancelet <pierstoval@gmail.com>
+* (c) Alexandre Rock Ancelet <contact@orbitale.io>
 *
 * For the full copyright and license information, please view the LICENSE
 * file that was distributed with this source code.
 */
 
-namespace Pierstoval\Bundle\TranslationBundle\Tests\Translator;
+namespace Orbitale\Bundle\TranslationBundle\Tests\Translator;
 
 use Doctrine\ORM\EntityManager;
-use Pierstoval\Bundle\TranslationBundle\Entity\Translation;
-use Pierstoval\Bundle\TranslationBundle\Repository\TranslationRepository;
-use Pierstoval\Bundle\TranslationBundle\Tests\Fixtures\AbstractTestCase;
-use Pierstoval\Bundle\TranslationBundle\Translation\Translator;
+use Orbitale\Bundle\TranslationBundle\Entity\Translation;
+use Orbitale\Bundle\TranslationBundle\Repository\TranslationRepository;
+use Orbitale\Bundle\TranslationBundle\Tests\Fixtures\AbstractTestCase;
+use Orbitale\Bundle\TranslationBundle\Translation\Translator;
 use Symfony\Component\Translation\MessageSelector;
 
 class TranslatorTest extends AbstractTestCase
@@ -33,7 +33,7 @@ class TranslatorTest extends AbstractTestCase
     public function __construct($name = null, array $data = array(), $dataName = '')
     {
         parent::__construct($name, $data, $dataName);
-        $this->translator = $this->getKernel()->getContainer()->get('pierstoval_translator');
+        $this->translator = $this->getKernel()->getContainer()->get('orbitale_translator');
         $this->translator->setFlushStrategy(Translator::FLUSH_RUNTIME);
         $this->translator->setFallbackLocales(array($this->getKernel()->getContainer()->getParameter('locale')));
         $this->em = $this->getKernel()->getContainer()->get('doctrine')->getManager();
@@ -48,7 +48,7 @@ class TranslatorTest extends AbstractTestCase
 
         // Ensure the table is empty
         $connection = $this->em->getConnection();
-        $connection->query($connection->getDatabasePlatform()->getTruncateTableSQL('pierstoval_translations', true));
+        $connection->query($connection->getDatabasePlatform()->getTruncateTableSQL('orbitale_translations', true));
 
         // And ensure the entityManager is empty of any managed entity
         $this->em->clear();
@@ -127,7 +127,7 @@ class TranslatorTest extends AbstractTestCase
         $token = $this->generateToken($source, $domain, $locale);
 
         /** @var TranslationRepository $repo */
-        $repo = $this->em->getRepository('PierstovalTranslationBundle:Translation');
+        $repo = $this->em->getRepository('OrbitaleTranslationBundle:Translation');
 
         /** @var Translation $translationObject */
         $translationObject = $repo->findOneBy(array('token' => $token));
@@ -191,7 +191,7 @@ class TranslatorTest extends AbstractTestCase
         $this->em->detach($translation);
 
         /** @var TranslationRepository $repo */
-        $repo = $this->em->getRepository('PierstovalTranslationBundle:Translation');
+        $repo = $this->em->getRepository('OrbitaleTranslationBundle:Translation');
 
         $tokens = $repo->findByTokens(array($translation->getToken()));
         $this->assertNotEmpty($tokens);
@@ -213,7 +213,7 @@ class TranslatorTest extends AbstractTestCase
         $token = $this->generateToken('test', 'messages', 'fr');
 
         /** @var TranslationRepository $repo */
-        $repo = $this->em->getRepository('PierstovalTranslationBundle:Translation');
+        $repo = $this->em->getRepository('OrbitaleTranslationBundle:Translation');
 
         $this->translator->flushTranslations();
 
@@ -251,7 +251,7 @@ class TranslatorTest extends AbstractTestCase
         $this->em->flush();
 
         /** @var TranslationRepository $repo */
-        $repo = $this->em->getRepository('PierstovalTranslationBundle:Translation');
+        $repo = $this->em->getRepository('OrbitaleTranslationBundle:Translation');
 
         $locales = $repo->getLocales();
 
@@ -276,7 +276,7 @@ class TranslatorTest extends AbstractTestCase
         $this->em->flush();
 
         /** @var TranslationRepository $repo */
-        $repo = $this->em->getRepository('PierstovalTranslationBundle:Translation');
+        $repo = $this->em->getRepository('OrbitaleTranslationBundle:Translation');
 
         $domains = $repo->getDomains();
 
@@ -298,7 +298,7 @@ class TranslatorTest extends AbstractTestCase
         $this->em->flush();
 
         /** @var TranslationRepository $repo */
-        $repo = $this->em->getRepository('PierstovalTranslationBundle:Translation');
+        $repo = $this->em->getRepository('OrbitaleTranslationBundle:Translation');
 
         $likes = $repo->findOneLikes($translation1);
         $this->assertNotNull($likes);
@@ -326,7 +326,7 @@ class TranslatorTest extends AbstractTestCase
         $this->em->flush();
 
         /** @var TranslationRepository $repo */
-        $repo = $this->em->getRepository('PierstovalTranslationBundle:Translation');
+        $repo = $this->em->getRepository('OrbitaleTranslationBundle:Translation');
 
         $likes = $repo->findLikes();
         $this->assertNotEmpty($likes);
@@ -355,7 +355,7 @@ class TranslatorTest extends AbstractTestCase
         $this->em->flush();
 
         /** @var TranslationRepository $repo */
-        $repo = $this->em->getRepository('PierstovalTranslationBundle:Translation');
+        $repo = $this->em->getRepository('OrbitaleTranslationBundle:Translation');
 
         $likesFR = $repo->findLikes('fr');
         $this->assertNotEmpty($likesFR);
@@ -383,7 +383,7 @@ class TranslatorTest extends AbstractTestCase
         $this->em->flush();
 
         /** @var TranslationRepository $repo */
-        $repo = $this->em->getRepository('PierstovalTranslationBundle:Translation');
+        $repo = $this->em->getRepository('OrbitaleTranslationBundle:Translation');
 
         $likesMessages = $repo->findLikes(null, 'messages');
         $this->assertNotEmpty($likesMessages);
@@ -408,13 +408,13 @@ class TranslatorTest extends AbstractTestCase
         $translator->trans('test', array(), 'messages', 'fr');
         $token = $this->generateToken('test', 'messages', 'fr');
 
-        $translation = $this->em->getRepository('PierstovalTranslationBundle:Translation')->findOneBy(array('token' => $token));
+        $translation = $this->em->getRepository('OrbitaleTranslationBundle:Translation')->findOneBy(array('token' => $token));
         $this->assertNull($translation);
 
         // Triggers the translator's __destruct() method
         unset($translator);
 
-        $translation = $this->em->getRepository('PierstovalTranslationBundle:Translation')->findOneBy(array('token' => $token));
+        $translation = $this->em->getRepository('OrbitaleTranslationBundle:Translation')->findOneBy(array('token' => $token));
         $this->assertNotNull($translation);
     }
 

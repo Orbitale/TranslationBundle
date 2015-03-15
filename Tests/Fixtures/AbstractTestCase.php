@@ -1,23 +1,19 @@
 <?php
 /*
-* This file is part of the PierstovalTranslationBundle package.
+* This file is part of the OrbitaleTranslationBundle package.
 *
-* (c) Alexandre "Pierstoval" Rock Ancelet <pierstoval@gmail.com>
+* (c) Alexandre Rock Ancelet <contact@orbitale.io>
 *
 * For the full copyright and license information, please view the LICENSE
 * file that was distributed with this source code.
 */
 
-namespace Pierstoval\Bundle\TranslationBundle\Tests\Fixtures;
+namespace Orbitale\Bundle\TranslationBundle\Tests\Fixtures;
 
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpKernel\KernelInterface;
 
-/**
- * Class AbstractTestCase
- * @package Pierstoval\Bundle\TranslationBundle\Tests\Fixtures
- */
 class AbstractTestCase extends WebTestCase
 {
     /**

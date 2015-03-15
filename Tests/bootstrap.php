@@ -1,8 +1,8 @@
 <?php
 /*
-* This file is part of the PierstovalCmsBundle package.
+* This file is part of the OrbitaleTranslationBundle package.
 *
-* (c) Alexandre "Pierstoval" Rock Ancelet <pierstoval@gmail.com>
+* (c) Alexandre Rock Ancelet <contact@orbitale.io>
 *
 * For the full copyright and license information, please view the LICENSE
 * file that was distributed with this source code.
@@ -20,7 +20,7 @@ $autoload = require_once $file;
 
 AnnotationRegistry::registerFile(__DIR__.'/../vendor/doctrine/orm/lib/Doctrine/ORM/Mapping/Driver/DoctrineAnnotations.php');
 
-$dbFile = __DIR__.'/../vendor/pierstoval_translation_test.db';
+$dbFile = __DIR__.'/../vendor/orbitale_translation_test.db';
 
 if (file_exists($dbFile)) {
     unlink($dbFile);

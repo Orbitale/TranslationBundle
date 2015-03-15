@@ -1,8 +1,8 @@
 [![SensioLabsInsight](https://insight.sensiolabs.com/projects/79130396-6820-46ba-9412-5e3c29429845/big.png)](https://insight.sensiolabs.com/projects/79130396-6820-46ba-9412-5e3c29429845)
-[![Build Status](https://travis-ci.org/Pierstoval/TranslationBundle.svg?branch=master)](https://travis-ci.org/Pierstoval/TranslationBundle)
-[![Coverage Status](https://coveralls.io/repos/Pierstoval/TranslationBundle/badge.svg?branch=master)](https://coveralls.io/r/Pierstoval/TranslationBundle?branch=master)
+[![Build Status](https://travis-ci.org/Orbitale/TranslationBundle.svg?branch=master)](https://travis-ci.org/Orbitale/TranslationBundle)
+[![Coverage Status](https://coveralls.io/repos/Orbitale/TranslationBundle/badge.svg?branch=master)](https://coveralls.io/r/Orbitale/TranslationBundle?branch=master)
 
-Pierstoval TranslationBundle
+Orbitale TranslationBundle
 ==================
 
 Adds new features to native Symfony translator, without replacing it.
@@ -17,7 +17,7 @@ Installation
 Just write this command line instruction if Composer is installed in your Symfony root directory :
 
 ```sh
-composer require pierstoval/translation-bundle
+composer require orbitale/translation-bundle
 ```
 
 I recommend to use Composer, as it is the best way to keep this repository update on your application.
@@ -38,7 +38,7 @@ You need to initiate some settings to make sure the bundle is configured properl
         public function registerBundles() {
             $bundles = array(
                 // ...
-                new Pierstoval\Bundle\TranslationBundle\PierstovalTranslationBundle(),// Registers Pierstoval TranslationBundle
+                new Orbitale\Bundle\TranslationBundle\OrbitaleTranslationBundle(),// Registers Orbitale TranslationBundle
     
     ```
 
@@ -65,7 +65,7 @@ Usage
 
 You can use your translator like before, in Twig, controllers or anything.
 
-If you already have translation files, Pierstoval's translator will find them and rely on the native translator to cache them and retrieve them.
+If you already have translation files, Orbitale's translator will find them and rely on the native translator to cache them and retrieve them.
 
 But if the translator does not find any translation, then it will search in the database, and if there is none, it will persist a new "empty" translation, for you to know that something has to be translated !
 
@@ -74,7 +74,7 @@ Managing translations in the database
 
 You can manage translations in three different ways :
 
-1. **Using the Pierstoval's `TranslationController`**
+1. **Using the Orbitale's `TranslationController`**
 
     You'll just load the internal controller by injecting our routes into your app, and get access to our translation manager. See "Admin Panel" first section for more informations.
     
@@ -96,12 +96,12 @@ For this you can inject our routing files into your own routing config :
 
 ```yml
 # app/config/routing.yml
-pierstoval_translation_front:
-    resource: "@PierstovalTranslationBundle/Resources/config/routing_front.yml"
+orbitale_translation_front:
+    resource: "@OrbitaleTranslationBundle/Resources/config/routing_front.yml"
     prefix:   /
 
-pierstoval_translation_admin:
-    resource: "@PierstovalTranslationBundle/Resources/config/routing_admin.yml"
+orbitale_translation_admin:
+    resource: "@OrbitaleTranslationBundle/Resources/config/routing_admin.yml"
     prefix:   /
     
 ```
@@ -110,7 +110,7 @@ pierstoval_translation_admin:
 
 Basically, the template is a classical Twitter's Bootstrap v3 and jQuery v2, all bundled in the bundle.
 
-There are four routes usable by the **PierstovalTranslationBundle** controller :
+There are four routes usable by the **OrbitaleTranslationBundle** controller :
 
 #### Front
 + **Locale change** :
@@ -134,18 +134,18 @@ If you are using SonataAdminBundle in your Symfony app, then you can add the `Tr
 
 ```yml
 # app/config/config.yml
-pierstoval_translation:
+orbitale_translation:
     use_sonata: true
 ```
 
-The `PierstovalTranslationExtension` class will then load a `SonataAdmin` service which adds a translation list, and allows you to edit your translations directly in your Sonata backoffice.
+The `OrbitaleTranslationExtension` class will then load a `SonataAdmin` service which adds a translation list, and allows you to edit your translations directly in your Sonata backoffice.
 
 
 Configuration reference
 -------------------------
 
 ```yaml
-pierstoval_translation:
+orbitale_translation:
     # View default_locales.yml to view all 135 supported locales !
     # By default, it will only use the %locale% parameter
     locales: ~ 
@@ -154,7 +154,7 @@ pierstoval_translation:
     use_sonata: false 
     
     # This is the layout that will be extended by all internal administration views (list and edition)
-    admin_layout: PierstovalTranslationBundle:Translation:_layout.html.twig 
+    admin_layout: OrbitaleTranslationBundle:Translation:_layout.html.twig 
     
     # This is the directory where the extracted translations will be saved, when using the translation UI or the command-line-interface.
     output_directory: %kernel.root_dir%/Resources/translations/
@@ -166,7 +166,7 @@ Example :
 
 ```yml
 # app/config/config.yml
-pierstoval_translations:
+orbitale_translations:
     locales: ~
 ```
 
@@ -195,7 +195,7 @@ With the 2nd method, it's the shortest way. The languages will only be splitted 
 If you want to **extract the translations from the database to files**, you can do it in two ways :
 
 1. Use the internal controller. If you configured the internal routing parameters, you can use the translation UI and click the "extract" link to call a specific service. A locale is not necessary, as it can save all translation from all locales. **It will only save translated messages**.
-2. Use the command line tool, by running `pierstoval:translation:extract` command. With this tool, you can specify the locale, but also some more options, like the `--output-directory` (default `app/Resources/translations/`), the `--output-format` (default "yml", but you can use any format provided by Symfony's native translator, as I use the native service to export translations), and two other notions : *dirty* and *keeping files*.
+2. Use the command line tool, by running `orbitale:translation:extract` command. With this tool, you can specify the locale, but also some more options, like the `--output-directory` (default `app/Resources/translations/`), the `--output-format` (default "yml", but you can use any format provided by Symfony's native translator, as I use the native service to export translations), and two other notions : *dirty* and *keeping files*.
 
 A *dirty* translation is a **blank translation**, where the source, locale and domain are specified, and not the translation. If you specify the `--dirty` option to the command line tool, every blank translation will be saved in the files. Normally, they are not, as it's really not useful, and if you translate an element in the database but do not extract database into files, the expression will still be untranslated until you extract files.
 
@@ -207,7 +207,7 @@ How it works, behind
 
 The new translator simply extends Symfony's native translator, to keep using native's powerful translation system, just adding it a new abstraction layer : the database.
 
-When you use the native **Twig** filters ( `trans`, `transchoice`, `trans_default_domain` ), when you get the translator from the **Services Container** ( `$this->container->get('translator');/*From a controller*/` ), whenever you *translate* an expression, Pierstoval TranslationBundle's translator service will do several things the native one does not do.
+When you use the native **Twig** filters ( `trans`, `transchoice`, `trans_default_domain` ), when you get the translator from the **Services Container** ( `$this->container->get('translator');/*From a controller*/` ), whenever you *translate* an expression, Orbitale TranslationBundle's translator service will do several things the native one does not do.
 
 1. First, it will **search if the element exists in the Symfony's native translator**.
 If it does, then, it just returns it.
@@ -219,16 +219,3 @@ If it does, then, it just returns it.
 4. If the token exists, and if the element is already translated in the database, the translation is returned. If not, then the original expression is returned, after parsing the eventual translation parameters.
 
 5. As you may have noticed, Symfony's native translator is called ***at first***. It's simply to use Symfony's powerful **cache system**, which saves all translations inside a cached catalogue, to strongly enhance time execution and memory saving.
-
-Conclusion
--------------------------
-
-You can also view this repository [on its Packagist.org page](https://packagist.org/packages/pierstoval/translation-bundle), even though it's not really useful to see.
-
-Feel free to send me a mail at pierstoval@gmail.com if you have any question !! (I LOVE questions, really, feel free to ask !)
- 
-If you find this bundle to be cool, feel free to propose improvements and send pull-requests !
-
-Thanks for reading and using !
-
-Pierstoval.

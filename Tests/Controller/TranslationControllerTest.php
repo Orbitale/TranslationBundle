@@ -1,17 +1,17 @@
 <?php
 /*
-* This file is part of the PierstovalTranslationBundle package.
+* This file is part of the OrbitaleTranslationBundle package.
 *
-* (c) Alexandre "Pierstoval" Rock Ancelet <pierstoval@gmail.com>
+* (c) Alexandre Rock Ancelet <contact@orbitale.io>
 *
 * For the full copyright and license information, please view the LICENSE
 * file that was distributed with this source code.
 */
 
-namespace Pierstoval\Bundle\TranslationBundle\Test\Controller;
+namespace Orbitale\Bundle\TranslationBundle\Test\Controller;
 
-use Pierstoval\Bundle\TranslationBundle\Tests\Fixtures\AbstractTestCase;
-use Pierstoval\Bundle\TranslationBundle\Translation\Translator;
+use Orbitale\Bundle\TranslationBundle\Tests\Fixtures\AbstractTestCase;
+use Orbitale\Bundle\TranslationBundle\Translation\Translator;
 use Symfony\Component\DomCrawler\Field\TextareaFormField;
 use Symfony\Component\DomCrawler\Form;
 use Symfony\Component\Routing\Generator\UrlGenerator;
@@ -49,7 +49,7 @@ class TranslationControllerTest extends AbstractTestCase {
         $container = $client->getContainer();
 
         /** @var Translator $translator */
-        $translator = $container->get('pierstoval_translator');
+        $translator = $container->get('orbitale_translator');
         $translator->setFlushStrategy(Translator::FLUSH_RUNTIME);
 
         $translator->trans('admin.empty.translation', array(), 'trans_domain', 'fr');
@@ -66,7 +66,7 @@ class TranslationControllerTest extends AbstractTestCase {
 
         $this->assertContains('trans_domain', $transLink->html());
         $this->assertEquals('(0 / 1)', $transLink->filter('span')->html());
-        $this->assertEquals($urlGenerator->generate('pierstoval_translation_edit', array('locale' => 'fr', 'domain' => 'trans_domain'), UrlGenerator::ABSOLUTE_URL), $transLink->attr('href'));
+        $this->assertEquals($urlGenerator->generate('orbitale_translation_edit', array('locale' => 'fr', 'domain' => 'trans_domain'), UrlGenerator::ABSOLUTE_URL), $transLink->attr('href'));
 
         $crawler->clear();
         $crawler = $client->click($transLink->link('GET'));

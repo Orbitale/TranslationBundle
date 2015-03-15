@@ -1,11 +1,19 @@
 <?php
+/*
+* This file is part of the OrbitaleTranslationBundle package.
+*
+* (c) Alexandre Rock Ancelet <contact@orbitale.io>
+*
+* For the full copyright and license information, please view the LICENSE
+* file that was distributed with this source code.
+*/
 
-namespace Pierstoval\Bundle\TranslationBundle\Controller;
+namespace Orbitale\Bundle\TranslationBundle\Controller;
 
 use Doctrine\Common\Persistence\ObjectManager;
-use Pierstoval\Bundle\TranslationBundle\Entity\Translation;
-use Pierstoval\Bundle\TranslationBundle\Repository\TranslationRepository;
-use Pierstoval\Bundle\TranslationBundle\Translation\Extractor;
+use Orbitale\Bundle\TranslationBundle\Entity\Translation;
+use Orbitale\Bundle\TranslationBundle\Repository\TranslationRepository;
+use Orbitale\Bundle\TranslationBundle\Translation\Extractor;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -25,7 +33,7 @@ class TranslationController extends Controller
         // Retrieves locales
         $locales = $this->container->getParameter('locales');
 
-        // See class PierstovalTranslationExtension:processLocale to view locale array format
+        // See class OrbitaleTranslationExtension:processLocale to view locale array format
         if (!isset($locales[$locale])) {
             $msg = $translator->trans('Locale not found : "%locale%"', array('%locale%' => $locale));
             throw $this->createNotFoundException($msg);
@@ -42,10 +50,10 @@ class TranslationController extends Controller
 
     public function adminListAction()
     {
-        $translations = $this->getDoctrine()->getManager()->getRepository('PierstovalTranslationBundle:Translation')->getForAdmin();
+        $translations = $this->getDoctrine()->getManager()->getRepository('OrbitaleTranslationBundle:Translation')->getForAdmin();
 
-        return $this->render('PierstovalTranslationBundle:Translation:adminList.html.twig', array(
-            'layoutToExtend' => $this->container->getParameter('pierstoval_translation.admin_layout') ?: $this->container->getParameter('pierstoval_translation.default_layout'),
+        return $this->render('OrbitaleTranslationBundle:Translation:adminList.html.twig', array(
+            'layoutToExtend' => $this->container->getParameter('orbitale_translation.admin_layout') ?: $this->container->getParameter('orbitale_translation.default_layout'),
             'translations' => $translations,
         ));
     }
@@ -53,7 +61,7 @@ class TranslationController extends Controller
     public function exportAction($locale = null, Request $request)
     {
         /** @var Extractor $extractor */
-        $extractor = $this->container->get('pierstoval.translation.extractor');
+        $extractor = $this->container->get('orbitale.translation.extractor');
 
         $done = true;
 
@@ -70,17 +78,17 @@ class TranslationController extends Controller
         }
 
         if ($done) {
-            $request->getSession()->getFlashBag()->add('success', $this->container->get('translator')->trans('extraction_done', array(), 'pierstoval_translation'));
-            return $this->redirect($this->generateUrl('pierstoval_translation_adminlist'));
+            $request->getSession()->getFlashBag()->add('success', $this->container->get('translator')->trans('extraction_done', array(), 'orbitale_translation'));
+            return $this->redirect($this->generateUrl('orbitale_translation_adminlist'));
         } else {
-            throw new \Exception($this->container->get('translator')->trans('error.translation_extract', array(), 'pierstoval_translation'));
+            throw new \Exception($this->container->get('translator')->trans('error.translation_extract', array(), 'orbitale_translation'));
         }
     }
 
     public function editAction(Request $request, $locale, $domain)
     {
         /** @var TranslationRepository $transRepo */
-        $transRepo = $this->getDoctrine()->getRepository('PierstovalTranslationBundle:Translation');
+        $transRepo = $this->getDoctrine()->getRepository('OrbitaleTranslationBundle:Translation');
 
         $nb = null;
         if ($request->isMethod('POST')) {
@@ -101,9 +109,9 @@ class TranslationController extends Controller
             throw $this->createNotFoundException('Unsupported locale "'.$locale.'".');
         }
 
-        $layoutToExtend = $this->container->getParameter('pierstoval_translation.admin_layout') ?: $this->container->getParameter('pierstoval_translation.default_layout');
+        $layoutToExtend = $this->container->getParameter('orbitale_translation.admin_layout') ?: $this->container->getParameter('orbitale_translation.default_layout');
 
-        return $this->render('PierstovalTranslationBundle:Translation:edit.html.twig', array(
+        return $this->render('OrbitaleTranslationBundle:Translation:edit.html.twig', array(
             'layoutToExtend' => $layoutToExtend,
             'nb_translated' => $nb,
             'translations' => $translations,
@@ -179,7 +187,7 @@ class TranslationController extends Controller
             $message .= 'no_translation';
         } else {
             /** @var Translation $entity */
-            $entity = $em->getRepository('PierstovalTranslationBundle:Translation')->findOneByToken($token);
+            $entity = $em->getRepository('OrbitaleTranslationBundle:Translation')->findOneByToken($token);
             if (!$entity) {
                 $message .= 'no_translation_token';
             } else {
@@ -196,7 +204,7 @@ class TranslationController extends Controller
             }
         }
 
-        $message = $this->get('translator')->trans($message, array(), 'pierstoval_translation');
+        $message = $this->get('translator')->trans($message, array(), 'orbitale_translation');
 
         return new Response(json_encode(array(
             'token' => $token,

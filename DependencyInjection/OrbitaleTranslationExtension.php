@@ -1,6 +1,14 @@
 <?php
+/*
+* This file is part of the OrbitaleTranslationBundle package.
+*
+* (c) Alexandre Rock Ancelet <contact@orbitale.io>
+*
+* For the full copyright and license information, please view the LICENSE
+* file that was distributed with this source code.
+*/
 
-namespace Pierstoval\Bundle\TranslationBundle\DependencyInjection;
+namespace Orbitale\Bundle\TranslationBundle\DependencyInjection;
 
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -8,12 +16,7 @@ use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
 use Symfony\Component\DependencyInjection\Loader;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
-/**
- * This is the class that loads and manages your bundle configuration
- *
- * To learn more see {@link http://symfony.com/doc/current/cookbook/bundles/extension.html}
- */
-class PierstovalTranslationExtension extends Extension
+class OrbitaleTranslationExtension extends Extension
 {
 
     /**
@@ -43,7 +46,7 @@ class PierstovalTranslationExtension extends Extension
         }
 
         foreach ($config as $key => $value) {
-            $container->setParameter('pierstoval_translation.' . $key, $value);
+            $container->setParameter('orbitale_translation.' . $key, $value);
         }
 
         $container->setParameter('locales', $config['locales']);
@@ -52,17 +55,16 @@ class PierstovalTranslationExtension extends Extension
 
     }
 
-
     /**
      * Gets user locales configuration in config file, and validates it.
      *
      * @param ContainerBuilder $container
      * @param $locales
      * @return array
+     * @throws InvalidArgumentException
      */
     private function processLocales(ContainerBuilder $container, $locales)
     {
-
         if (is_string($locales)) {
             // When config similar to:
             // locales: 'fr,de,en'

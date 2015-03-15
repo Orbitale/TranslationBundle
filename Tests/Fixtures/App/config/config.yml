@@ -18,10 +18,10 @@ framework:
 doctrine:
     dbal:
         driver:   pdo_sqlite
-        dbname:   pierstoval_translation_test
+        dbname:   orbitale_translation_test
         user:     root
         charset:  UTF8
-        path:     %kernel.root_dir%/../../../vendor/pierstoval_translation_test.db
+        path:     %kernel.root_dir%/../../../vendor/orbitale_translation_test.db
     orm:
         auto_generate_proxy_classes: true
         auto_mapping: true

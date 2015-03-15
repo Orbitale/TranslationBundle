@@ -1,10 +1,10 @@
 services:
 
-    pierstoval_tools.admin.translations:
-        class: Pierstoval\Bundle\TranslationBundle\Admin\TranslationAdmin
+    orbitale_tools.admin.translations:
+        class: Orbitale\Bundle\TranslationBundle\Admin\TranslationAdmin
         tags:
             - { name: sonata.admin, manager_type: orm, group: "Translations", label: "Translations" }
         arguments:
             - ~
-            - Pierstoval\Bundle\TranslationBundle\Entity\Translation
+            - Orbitale\Bundle\TranslationBundle\Entity\Translation
             - ~

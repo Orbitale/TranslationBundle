@@ -1,20 +1,21 @@
 <?php
+/*
+* This file is part of the OrbitaleTranslationBundle package.
+*
+* (c) Alexandre Rock Ancelet <contact@orbitale.io>
+*
+* For the full copyright and license information, please view the LICENSE
+* file that was distributed with this source code.
+*/
 
-namespace Pierstoval\Bundle\TranslationBundle\Translation;
+namespace Orbitale\Bundle\TranslationBundle\Translation;
 
-use Pierstoval\Bundle\TranslationBundle\Entity\Translation;
-use Pierstoval\Bundle\TranslationBundle\Repository\TranslationRepository;
+use Orbitale\Bundle\TranslationBundle\Entity\Translation;
+use Orbitale\Bundle\TranslationBundle\Repository\TranslationRepository;
 use Symfony\Component\Translation\Loader\LoaderInterface;
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\Translation\MessageCatalogue;
 
-/**
- * Class TranslationLoader
- * Project pierstoval
- *
- * @author Pierstoval
- * @version 1.0 22/03/2014
- */
 class TranslationLoader implements LoaderInterface {
 
     /**
@@ -26,7 +27,7 @@ class TranslationLoader implements LoaderInterface {
      * @param EntityManager $entityManager
      */
     public function __construct(EntityManager $entityManager){
-        $this->transRepo = $entityManager->getRepository("PierstovalTranslationBundle:Translation");
+        $this->transRepo = $entityManager->getRepository("OrbitaleTranslationBundle:Translation");
     }
 
     function load($resource, $locale, $domain = 'messages'){

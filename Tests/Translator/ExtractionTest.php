@@ -1,19 +1,19 @@
 <?php
 /*
-* This file is part of the PierstovalTranslationBundle package.
+* This file is part of the OrbitaleTranslationBundle package.
 *
-* (c) Alexandre "Pierstoval" Rock Ancelet <pierstoval@gmail.com>
+* (c) Alexandre Rock Ancelet <contact@orbitale.io>
 *
 * For the full copyright and license information, please view the LICENSE
 * file that was distributed with this source code.
 */
 
-namespace Pierstoval\Bundle\TranslationBundle\Tests\Translator;
+namespace Orbitale\Bundle\TranslationBundle\Tests\Translator;
 
 use Doctrine\ORM\EntityManager;
-use Pierstoval\Bundle\TranslationBundle\Entity\Translation;
-use Pierstoval\Bundle\TranslationBundle\Tests\Fixtures\AbstractTestCase;
-use Pierstoval\Bundle\TranslationBundle\Command\TranslationExtractCommand;
+use Orbitale\Bundle\TranslationBundle\Entity\Translation;
+use Orbitale\Bundle\TranslationBundle\Tests\Fixtures\AbstractTestCase;
+use Orbitale\Bundle\TranslationBundle\Command\TranslationExtractCommand;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\Console\Output\NullOutput;
@@ -40,7 +40,7 @@ class ExtractionTest extends AbstractTestCase {
     {
         // Ensure the table is empty
         $connection = $this->em->getConnection();
-        $connection->query($connection->getDatabasePlatform()->getTruncateTableSQL('pierstoval_translations', true));
+        $connection->query($connection->getDatabasePlatform()->getTruncateTableSQL('orbitale_translations', true));
 
         // And ensure the entityManager is empty of any managed entity
         $this->em->clear();

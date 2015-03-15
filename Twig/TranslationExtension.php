@@ -1,8 +1,16 @@
 <?php
+/*
+* This file is part of the OrbitaleTranslationBundle package.
+*
+* (c) Alexandre Rock Ancelet <contact@orbitale.io>
+*
+* For the full copyright and license information, please view the LICENSE
+* file that was distributed with this source code.
+*/
 
-namespace Pierstoval\Bundle\TranslationBundle\Twig;
+namespace Orbitale\Bundle\TranslationBundle\Twig;
 
-use Pierstoval\Bundle\TranslationBundle\Translation\Translator;
+use Orbitale\Bundle\TranslationBundle\Translation\Translator;
 
 class TranslationExtension extends \Twig_Extension {
 
@@ -18,7 +26,7 @@ class TranslationExtension extends \Twig_Extension {
 
     public function getName()
     {
-        return 'pierstoval_translation.twig.extension';
+        return 'orbitale_translation.twig.extension';
     }
 
     public function getFunctions()

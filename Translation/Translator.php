@@ -1,22 +1,23 @@
 <?php
+/*
+* This file is part of the OrbitaleTranslationBundle package.
+*
+* (c) Alexandre Rock Ancelet <contact@orbitale.io>
+*
+* For the full copyright and license information, please view the LICENSE
+* file that was distributed with this source code.
+*/
 
-namespace Pierstoval\Bundle\TranslationBundle\Translation;
+namespace Orbitale\Bundle\TranslationBundle\Translation;
 
 use Doctrine\ORM\EntityManager;
-use Pierstoval\Bundle\TranslationBundle\Entity\Translation;
+use Orbitale\Bundle\TranslationBundle\Entity\Translation;
 
 use Symfony\Bundle\FrameworkBundle\Translation\Translator as BaseTranslator;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Translation\MessageSelector;
 use Symfony\Component\Translation\TranslatorInterface;
 
-/**
- * Class Translator
- * Project Pierstoval
- *
- * @author Pierstoval
- * @version 1.0 08/01/2014
- */
 class Translator extends BaseTranslator implements TranslatorInterface {
 
     /**
@@ -127,7 +128,7 @@ class Translator extends BaseTranslator implements TranslatorInterface {
      * @return array
      */
     public function getLangs() {
-        return $this->container->getParameter('pierstoval_translation.locales');
+        return $this->container->getParameter('orbitale_translation.locales');
     }
 
     /**
@@ -317,7 +318,7 @@ class Translator extends BaseTranslator implements TranslatorInterface {
 
         if (!isset($catalogue[$locale][$domain])) {
             $translations = $this->_em
-                ->getRepository('PierstovalTranslationBundle:Translation')
+                ->getRepository('OrbitaleTranslationBundle:Translation')
                 ->findBy(array('locale'=>$locale,'domain'=>$domain));
 
             if ($translations) {

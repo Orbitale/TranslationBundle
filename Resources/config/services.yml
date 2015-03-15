@@ -1,45 +1,45 @@
 services:
     translation.loader.db:
-        class: %pierstoval_translation.loader%
+        class: %orbitale_translation.loader%
         arguments:
             - @doctrine.orm.entity_manager
         tags:
             - { name: translation.loader, alias: db }
 
-    pierstoval_translator:
-        class: %pierstoval_translation.translator.class%
+    orbitale_translator:
+        class: %orbitale_translation.translator.class%
         arguments:
             - @service_container
             - @translator.selector
             - []
             - {cache_dir: %kernel.cache_dir%/translations, debug: %kernel.debug%}
 
-    pierstoval.translation.extractor:
-        class: %pierstoval_translation.extractor.class%
+    orbitale.translation.extractor:
+        class: %orbitale_translation.extractor.class%
         arguments:
             - @doctrine.orm.entity_manager
             - @translation.writer
             - %kernel.root_dir%
             - %kernel.cache_dir%
-            - %pierstoval_translation.output_directory%
+            - %orbitale_translation.output_directory%
 
-    pierstoval_translation.listener.flush_translations:
-        class: Pierstoval\Bundle\TranslationBundle\Listeners\FlushTranslations
+    orbitale_translation.listener.flush_translations:
+        class: Orbitale\Bundle\TranslationBundle\Listeners\FlushTranslations
         arguments:
-            - @pierstoval_translator
+            - @orbitale_translator
         tags:
             - { name: kernel.event_subscriber }
 
-    pierstoval_translation.listener.locale:
-        class: Pierstoval\Bundle\TranslationBundle\Listeners\LocaleListener
+    orbitale_translation.listener.locale:
+        class: Orbitale\Bundle\TranslationBundle\Listeners\LocaleListener
         arguments:
             - "%kernel.default_locale%"
         tags:
             - { name: kernel.event_subscriber }
 
-    pierstoval_translation.twig.extension:
-        class: Pierstoval\Bundle\TranslationBundle\Twig\TranslationExtension
+    orbitale_translation.twig.extension:
+        class: Orbitale\Bundle\TranslationBundle\Twig\TranslationExtension
         arguments:
-            - @pierstoval_translator
+            - @orbitale_translator
         tags:
             - { name: twig.extension }
