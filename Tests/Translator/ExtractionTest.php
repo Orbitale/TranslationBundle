@@ -16,29 +16,26 @@ use Orbitale\Bundle\TranslationBundle\Entity\Translation;
 use Orbitale\Bundle\TranslationBundle\Tests\Fixtures\AbstractTestCase;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
+use Symfony\Component\Console\Output\StreamOutput;
 use Symfony\Component\Console\Output\NullOutput;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Yaml\Yaml;
 
 class ExtractionTest extends AbstractTestCase
 {
-
     /**
      * @var EntityManager
      */
     protected $em;
 
-    public function __construct($name = null, array $data = array(), $dataName = '')
-    {
-        parent::__construct($name, $data, $dataName);
-        $this->em = $this->getKernel()->getContainer()->get('doctrine')->getManager();
-    }
-
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    public function setUp()
     {
+        parent::setUp();
+        $this->em = static::$kernel->getContainer()->get('doctrine')->getManager();
+
         // Ensure the table is empty
         $connection = $this->em->getConnection();
         $connection->query($connection->getDatabasePlatform()->getTruncateTableSQL('orbitale_translations', true));
@@ -77,8 +74,6 @@ class ExtractionTest extends AbstractTestCase
 
     public function testSuccessfulExtractionCommand()
     {
-        static::bootKernel();
-
         $dummyDatas = $this->processDummyDatas();
 
         $outputDirectory = $this->getKernel()->getContainer()->getParameter('kernel.root_dir').'/../../../vendor/_translations/';
@@ -100,7 +95,7 @@ class ExtractionTest extends AbstractTestCase
             '--output-directory' => $outputDirectory,
             '--dirty' => true,
         ));
-        $output = new BufferedOutput(OutputInterface::VERBOSITY_DEBUG);
+        $output = new NullOutput(OutputInterface::VERBOSITY_QUIET);
         $command->run($arrayInput, $output);
 
         $shouldBeThereFiles = array(
@@ -165,9 +160,19 @@ class ExtractionTest extends AbstractTestCase
             '--output-directory' => $outputDirectory,
             '--dirty' => true,
         ));
-        $output = new BufferedOutput(OutputInterface::VERBOSITY_DEBUG);
-        $commandOutput = $command->run($arrayInput, $output);
-        $output = $output->fetch();
+
+        if (class_exists('Symfony\Component\Console\Output\BufferedOutput')) {
+            $output = new BufferedOutput(OutputInterface::VERBOSITY_DEBUG);
+            $commandOutput = $command->run($arrayInput, $output);
+            $output = $output->fetch();
+        } else {
+            $fileName = $this->getKernel()->getRootDir().'/../../../build/_console.test.output.log';
+            $f = fopen($fileName, 'w');
+            $output = new StreamOutput($f, OutputInterface::VERBOSITY_DEBUG);
+            $commandOutput = $command->run($arrayInput, $output);
+            fclose($f);
+            $output = file_get_contents($fileName);
+        }
         $this->assertGreaterThan(0, $commandOutput);
         $this->assertContains('Wrong output format', $output);
         $this->assertContains('An unknown error has occurred, please check your configuration and datas.', $output);

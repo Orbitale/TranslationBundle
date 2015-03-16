@@ -44,7 +44,7 @@ class AppKernel extends Kernel
      */
     public function getCacheDir()
     {
-        return sys_get_temp_dir().'/OrbitaleTranslationBundle/cache';
+        return __DIR__.'/../../../build/cache/';
     }
 
     /**
@@ -52,6 +52,6 @@ class AppKernel extends Kernel
      */
     public function getLogDir()
     {
-        return sys_get_temp_dir().'/OrbitaleTranslationBundle/logs';
+        return __DIR__.'/../../../kernel_logs/';
     }
 }

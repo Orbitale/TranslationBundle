@@ -26,6 +26,10 @@ if (file_exists($dbFile)) {
     unlink($dbFile);
 }
 
+if (!is_dir(__DIR__.'/../build')) {
+    mkdir(__DIR__.'/../build');
+}
+
 include __DIR__.'/Fixtures/App/AppKernel.php';
 
 $application = new Application(new AppKernel('test', true));

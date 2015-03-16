@@ -32,11 +32,16 @@ class AbstractTestCase extends WebTestCase
      */
     protected function getKernel(array $options = array())
     {
-        if (!static::$kernel) {
-            static::bootKernel($options);
-        }
-
         return static::$kernel;
+    }
+
+    public function setUp()
+    {
+        if (static::$kernel) {
+            static::$kernel->shutdown();
+        }
+        static::$kernel = static::createKernel(array());
+        static::$kernel->boot();
     }
 
     /**

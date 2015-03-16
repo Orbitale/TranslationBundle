@@ -12,6 +12,7 @@ namespace Orbitale\Bundle\TranslationBundle\Listeners;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
+use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\HttpKernel\KernelEvents;
 
 class LocaleListener implements EventSubscriberInterface
@@ -26,7 +27,7 @@ class LocaleListener implements EventSubscriberInterface
     public function onKernelRequest(GetResponseEvent $event)
     {
         $request = $event->getRequest();
-        if (!$request->hasPreviousSession()) {
+        if (!$request->hasPreviousSession() || $event->getRequestType() !== HttpKernelInterface::MASTER_REQUEST) {
             return;
         }
 

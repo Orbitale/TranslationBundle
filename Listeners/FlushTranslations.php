@@ -35,7 +35,7 @@ class FlushTranslations implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return array(
-            KernelEvents::FINISH_REQUEST => array('flushTranslations'),
+            'kernel.finish_request' => array('flushTranslations'),
             KernelEvents::TERMINATE => array('flushTranslations'),
             KernelEvents::EXCEPTION => array('flushTranslations')
         );

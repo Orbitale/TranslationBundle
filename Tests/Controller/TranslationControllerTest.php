@@ -29,9 +29,12 @@ class TranslationControllerTest extends AbstractTestCase
         $exportLink = $crawler->filter('div.container > h1 + a');
         $translationsContainer = $crawler->filter('div.container .row > div.alert');
 
-        $this->assertContains('alert-danger', $translationsContainer->attr('class'));
-        $this->assertContains('/admin/translations/export', $exportLink->attr('href'));
-        $this->assertGreaterThan(0, $exportLink->count());
+        $this->assertGreaterThan(0, count($translationsContainer));
+        if (count($translationsContainer)) {
+            $this->assertContains('alert-danger', $translationsContainer->attr('class'));
+            $this->assertContains('/admin/translations/export', $exportLink->attr('href'));
+            $this->assertGreaterThan(0, $exportLink->count());
+        }
 
         $crawler->clear();
         $crawler = $client->click($exportLink->link('GET'));

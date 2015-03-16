@@ -19,6 +19,10 @@ use Symfony\Component\Translation\MessageSelector;
 
 class TranslatorTest extends AbstractTestCase
 {
+    /**
+     * @var EntityManager
+     */
+    protected $em;
 
     /**
      * @var Translator
@@ -26,24 +30,17 @@ class TranslatorTest extends AbstractTestCase
     protected $translator;
 
     /**
-     * @var EntityManager
+     * {@inheritdoc}
      */
-    protected $em;
-
-    public function __construct($name = null, array $data = array(), $dataName = '')
+    public function setUp()
     {
-        parent::__construct($name, $data, $dataName);
+        parent::setUp();
+        $this->em = $this->getKernel()->getContainer()->get('doctrine')->getManager();
+
         $this->translator = $this->getKernel()->getContainer()->get('orbitale_translator');
         $this->translator->setFlushStrategy(Translator::FLUSH_RUNTIME);
         $this->translator->setFallbackLocales(array($this->getKernel()->getContainer()->getParameter('locale')));
-        $this->em = $this->getKernel()->getContainer()->get('doctrine')->getManager();
-    }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function setUp()
-    {
         $this->translator->emptyCatalogue();
 
         // Ensure the table is empty
@@ -58,7 +55,6 @@ class TranslatorTest extends AbstractTestCase
     {
         $exception = '';
         try {
-            $this->bootKernel();
             $translator = new Translator($this->getKernel()->getContainer(), new MessageSelector());
             $translator->__construct($this->getKernel()->getContainer(), new MessageSelector());
         } catch (\Exception $e) {
@@ -406,7 +402,6 @@ class TranslatorTest extends AbstractTestCase
 
     public function testDestructFlush()
     {
-        $this->bootKernel();
         $translator = new Translator($this->getKernel()->getContainer(), new MessageSelector());
         $translator->emptyCatalogue();
         $translator->setFlushStrategy(Translator::FLUSH_TERMINATE);
