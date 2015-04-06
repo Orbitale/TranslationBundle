@@ -63,7 +63,7 @@ class TranslationController extends Controller
 
         $done = true;
 
-        $languages = (!$locale || $locale = 'all') ? array_keys($this->container->getParameter('locales')) : null;
+        $languages = (!$locale || $locale === 'all') ? array_keys($this->container->getParameter('locales')) : null;
 
         if ($languages) {
             foreach ($languages as $locale) {
