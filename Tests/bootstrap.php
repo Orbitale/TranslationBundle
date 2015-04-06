@@ -11,6 +11,7 @@
 use Doctrine\Common\Annotations\AnnotationRegistry;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Component\Console\Input\ArrayInput;
+use Symfony\Component\Console\Output\NullOutput;
 
 $file = __DIR__.'/../vendor/autoload.php';
 if (!file_exists($file)) {
@@ -41,10 +42,10 @@ $application->setAutoExit(false);
 
 // Create database
 $input = new ArrayInput(array('command' => 'doctrine:database:create',));
-$application->run($input);
+$application->run($input, new NullOutput);
 
 // Create database schema
 $input = new ArrayInput(array('command' => 'doctrine:schema:create',));
-$application->run($input);
+$application->run($input, new NullOutput);
 
 unset($input, $application);

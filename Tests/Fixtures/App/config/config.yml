@@ -13,15 +13,21 @@ framework:
     validation:      { enable_annotations: true }
     templating:      { engines: ['twig'] }
     session:
-        storage_id: session.storage.filesystem
+        storage_id: session.storage.mock_file
+    profiler:
+        collect: false
 
 doctrine:
     dbal:
         driver:   pdo_sqlite
         dbname:   orbitale_translation_test
-        user:     root
         charset:  UTF8
-        path:     %kernel.root_dir%/../../../vendor/orbitale_translation_test.db
+        memory:   true
+        path:     %kernel.root_dir%/../../../build/orbitale_translation_test.db
     orm:
         auto_generate_proxy_classes: true
         auto_mapping: true
+
+orbitale_translation:
+    locales: fr,en
+    output_directory: %kernel.root_dir%/../../../build/translations

@@ -12,10 +12,12 @@ namespace Orbitale\Bundle\TranslationBundle\Test\Controller;
 
 use Orbitale\Bundle\TranslationBundle\Tests\Fixtures\AbstractTestCase;
 use Orbitale\Bundle\TranslationBundle\Translation\Translator;
+use Symfony\Component\BrowserKit\Cookie;
 use Symfony\Component\DomCrawler\Field\TextareaFormField;
 use Symfony\Component\DomCrawler\Form;
 use Symfony\Component\Routing\Generator\UrlGenerator;
 use Symfony\Component\Routing\Router;
+use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 
 class TranslationControllerTest extends AbstractTestCase
 {
@@ -30,20 +32,23 @@ class TranslationControllerTest extends AbstractTestCase
         $translationsContainer = $crawler->filter('div.container .row > div.alert');
 
         $this->assertGreaterThan(0, count($translationsContainer));
-        if (count($translationsContainer)) {
-            $this->assertContains('alert-danger', $translationsContainer->attr('class'));
-            $this->assertContains('/admin/translations/export', $exportLink->attr('href'));
-            $this->assertGreaterThan(0, $exportLink->count());
-        }
+        $this->assertContains('alert-danger', $translationsContainer->attr('class'));
+        $this->assertContains('/admin/translations/export', $exportLink->attr('href'));
+        $this->assertGreaterThan(0, $exportLink->count());
 
         $crawler->clear();
         $crawler = $client->click($exportLink->link('GET'));
 
         $refreshLink = '/admin/translations';
         $this->assertContains('Redirecting to '.$refreshLink, $crawler->html());
+    }
 
-        $crawler->clear();
-        unset($crawler, $refreshLink, $client, $exportLink);
+    public function testExportSingleLocale()
+    {
+        $client = static::createClient();
+
+        $crawler = $client->request("GET", '/admin/translations/export/fr');
+        $this->assertEquals(302, $client->getResponse()->getStatusCode());
     }
 
     public function testTranslationListAndEdit()
@@ -64,7 +69,7 @@ class TranslationControllerTest extends AbstractTestCase
         $crawler = $client->request("GET", '/admin/translations/');
 
         $this->assertEquals(1, $crawler->filter('div.container .row')->count());
-        $this->assertEquals(1, $crawler->filter('div.container .row h3 + ul > li')->count());
+        $this->assertEquals(2, $crawler->filter('div.container .row h3 + ul > li')->count());
 
         $transLink = $crawler->filter('div.container .row h3 + ul > li a');
 
@@ -97,6 +102,35 @@ class TranslationControllerTest extends AbstractTestCase
         $crawler->clear();
         unset($translator);
         unset($crawler);
+    }
+
+    public function testChangeLang()
+    {
+        $client = static::createClient();
+
+        $session = $client->getContainer()->get('session');
+        $firewall = 'main';
+        $token = new UsernamePasswordToken('user', null, $firewall, array());
+        $session->set('_security_'.$firewall, serialize($token));
+        $session->save();
+        $cookie = new Cookie($session->getName(), $session->getId());
+        $client->getCookieJar()->set($cookie);
+
+        $client->request('GET', '/lang/fr');
+        $this->assertEquals(302, $client->getResponse()->getStatusCode());
+        $this->assertEquals('fr', $client->getRequest()->getSession()->get('_locale'));
+
+        $client->request('GET', '/lang/en');
+        $this->assertEquals(302, $client->getResponse()->getStatusCode());
+        $this->assertEquals('en', $client->getRequest()->getSession()->get('_locale'));
+    }
+
+    public function testChangeLangIncorrect()
+    {
+        $client = static::createClient();
+        $crawler = $client->request('GET', '/lang/this_lang_does_not_exist_does_it');
+        $this->assertEquals(404, $client->getResponse()->getStatusCode());
+        $this->assertEquals('Locale not found : "this_lang_does_not_exist_does_it"', trim($crawler->filter('h1')->html()));
     }
 
 }
