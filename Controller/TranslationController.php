@@ -42,10 +42,8 @@ class TranslationController extends Controller
         // Changes the locale in session
         $request->getSession()->set('_locale', $locale);
 
-        $request->getSession()->getFlashBag()->add('info', $translator->trans('La langue a été modifiée pour : %lang%', array('%lang%' => $translator->trans($locales[$locale]))));
-
-        // Allows redirection with ?redirect= param
-        return $this->redirect($request->query->has('redirect') ? $request->query->get('redirect') : $request->getBaseUrl());
+        // Allows redirection with "?redirect=" param and host + base url if no redirect rule is specified
+        return $this->redirect($request->query->has('redirect') ? $request->query->get('redirect') : $request->getSchemeAndHttpHost().'/'.$request->getBaseUrl());
     }
 
     public function adminListAction()
