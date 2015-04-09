@@ -94,14 +94,24 @@ EOF
             $output->writeln('Using following output directory : <info>'.$outputDirectory.'</info>');
         }
 
-        // Lancement de la commande du service d'extraction de traductions
-        $done = $extractor->extract($locale, $outputFormat, $outputDirectory, $keepFiles, $dirty);
+        $errorMessage = '';
+        $done = false;
 
-        if ($done) {
+        // Lancement de la commande du service d'extraction de traductions
+        try {
+            $done = $extractor->extract($locale, $outputFormat, $outputDirectory, $keepFiles, $dirty);
+        } catch (\Exception $e) {
+            while ($e) {
+                $errorMessage .= "\n".$e->getMessage();
+                $e = $e->getPrevious();
+            }
+        }
+
+        if (!$errorMessage && $done) {
             $output->writeln('Done!');
             return 0;
         } else {
-            $output->writeln('An unknown error has occurred, please check your configuration and datas.');
+            $output->writeln("An error has occurred, please check your configuration and datas.".$errorMessage);
             return 1;
         }
     }

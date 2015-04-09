@@ -61,19 +61,9 @@ class TranslationController extends Controller
         /** @var Extractor $extractor */
         $extractor = $this->container->get('orbitale.translation.extractor');
 
-        $done = true;
+        $locales = (!$locale || $locale === 'all') ? array_keys($this->container->getParameter('locales')) : array($locale);
 
-        $languages = (!$locale || $locale === 'all') ? array_keys($this->container->getParameter('locales')) : null;
-
-        if ($languages) {
-            foreach ($languages as $locale) {
-                if (!$extractor->extract($locale)) {
-                    $done = false;
-                }
-            }
-        } else {
-            $done = $extractor->extract($locale) ? true : false;
-        }
+        $done = $extractor->extract($locales);
 
         if ($done) {
             $request->getSession()->getFlashBag()->add('success', $this->container->get('translator')->trans('extraction_done', array(), 'orbitale_translation'));

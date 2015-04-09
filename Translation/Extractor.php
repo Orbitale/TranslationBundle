@@ -33,7 +33,7 @@ class Extractor
     /**
      * @var OutputInterface
      */
-    private $cli_output;
+    private $cliOutput;
 
     /** @var TranslationWriter */
     private $translation_writer;
@@ -55,41 +55,85 @@ class Extractor
     public function cli(OutputInterface $output)
     {
         $this->cli = true;
-        $this->cli_output = $output;
+        $this->cliOutput = $output;
     }
 
     /**
      * Extracts the specified locale in translation files.
      *
-     * @param string $locale The locale to be extracted
-     * @param string $outputFormat The output format. Must follow Symfony's native translation formats.
-     * @param string $outputDirectory The directory where to store the translation files
-     * @param bool $keepFiles If true, will not erase already existing files.
-     * @param bool $dirty If true, will extract all ids that do not have a proper translation (null or empty)
+     * @param array|string $locales         The locale to be extracted
+     * @param string       $outputFormat    The output format. Must follow Symfony's native translation formats.
+     * @param string       $outputDirectory The directory where to store the translation files
+     * @param bool         $keepFiles       If true, will not erase already existing files.
+     * @param bool         $dirty           If true, will extract all ids that do not have a proper translation (null or empty)
      *
      * @return bool True if extraction succeeds, false instead.
      * @throws \Exception
      */
-    public function extract($locale, $outputFormat = 'yml', $outputDirectory = '', $keepFiles = false, $dirty = false)
+    public function extract($locales, $outputFormat = 'yml', $outputDirectory = '', $keepFiles = false, $dirty = false)
     {
+        return $this->doExtract($locales, $outputFormat, $outputDirectory, $keepFiles, $dirty);
+    }
+
+    /**
+     * @param array|string $locales
+     * @param string       $outputFormat
+     * @param string       $outputDirectory
+     * @param bool         $keepFiles
+     * @param bool         $dirty
+     *
+     * @return bool
+     * @throws \Exception
+     */
+    protected function doExtract($locales, $outputFormat = 'yml', $outputDirectory = '', $keepFiles = false, $dirty = false) {
+
+        if (!$this->dir_checked || !$outputDirectory) {
+            $this->checkOutputDir($outputDirectory, false);
+        }
+
+        // check format
+        $supportedFormats = $this->translation_writer->getFormats();
+        if (!in_array($outputFormat, $supportedFormats)) {
+            if ($this->cli) {
+                throw new \RuntimeException('<error>Wrong output format</error>. Supported formats are '.implode(', ', $supportedFormats).'.');
+            } else {
+                throw new \Exception('Wrong output format. Supported formats are '.implode(', ', $supportedFormats).'.');
+            }
+        }
+
+        // Clear translation cache
+        $cache_dirs = $this->cache_dir.'/../';
+
+        $env_dirs = glob($cache_dirs.'*');
 
         if ($this->cli) {
-            $output = $this->cli_output;
-        } else {
-            $output = null;
+            $this->cliOutput->writeln('Clearing cache catalogues...');
         }
-        try {
-            $returnDatas = $this->doExtract($locale, $outputFormat, $outputDirectory, $keepFiles, $dirty);
-        } catch (\Exception $e) {
-            if ($output) {
-                $output->writeln('<error>'.$e->getMessage().'</error>');
-            } else {
-                throw $e;
+        foreach ($env_dirs as $dir) {
+            if (is_dir($dir.'/translations')) {
+                $catalogues = glob($dir.'/translations/*');
+                foreach ($catalogues as $catalogue) {
+                    unlink($catalogue);
+                }
             }
-            $returnDatas = false;
         }
 
-        return $returnDatas;
+        if (is_string($locales)) {
+            $locales = array($locales);
+        }
+
+        $done = true;
+
+        foreach ($locales as $locale) {
+            $this->extractLocale($locale, $outputFormat, $outputDirectory, $keepFiles, $dirty);
+        }
+
+        // Reset des paramètres pour permettre une autre utilisation de l'extracteur
+        $this->dir_checked = false;
+        $this->cli = false;
+        $this->cliOutput = null;
+
+        return $done;
     }
 
     /**
@@ -98,42 +142,23 @@ class Extractor
      * @param string $outputDirectory
      * @param bool   $keepFiles
      * @param bool   $dirty
-     *
-     * @return bool
-     * @throws \Exception
      */
-    private function doExtract($locale, $outputFormat = 'yml', $outputDirectory = '', $keepFiles = false, $dirty = false) {
+    protected function extractLocale($locale, $outputFormat = 'yml', $outputDirectory = '', $keepFiles = false, $dirty = false)
+    {
+        /** @var TranslationRepository $repo */
+        $repo = $this->em->getRepository('OrbitaleTranslationBundle:Translation');
 
-        if (!$this->dir_checked || !$outputDirectory) {
-            $this->checkOutputDir($outputDirectory, false);
-        }
-
-        $cli = $this->cli;
-        if ($cli) {
-            $output = $this->cli_output;
+        if ($this->cli) {
+            $output = $this->cliOutput;
             $verbosity = $output->getVerbosity();
         } else {
             $output = null;
             $verbosity = null;
         }
 
-        // check format
-        $writer = $this->translation_writer;
-        $supportedFormats = $writer->getFormats();
-        if (!in_array($outputFormat, $supportedFormats)) {
-            if ($cli) {
-                throw new \RuntimeException('<error>Wrong output format</error>. Supported formats are '.implode(', ', $supportedFormats).'.');
-            } else {
-                throw new \Exception('Wrong output format. Supported formats are '.implode(', ', $supportedFormats).'.');
-            }
-        }
-
-        /** @var TranslationRepository $repo */
-        $repo = $this->em->getRepository('OrbitaleTranslationBundle:Translation');
-
         $catalogue = new MessageCatalogue($locale);
 
-        if ($cli && 2 < $verbosity) {
+        if ($this->cli && 1 < $verbosity) {
             $output->writeln('Retrieving elements from database...');
         }
 
@@ -143,7 +168,7 @@ class Extractor
         $dirty_elements = 0;
         $existing_files = array();
         $overwritten_files = array();
-        if ($cli) {
+        if ($this->cli) {
             $output->writeln('Preparing files...');
         }
         foreach ($datas as $translation) {
@@ -166,12 +191,12 @@ class Extractor
                 $dirty_elements++;
             }
         }
-        if ($cli && 1 < $verbosity) {
+        if ($this->cli && 1 < $verbosity) {
             $existing_files = count($existing_files);
             $overwritten_files = count($overwritten_files);
-            $output->writeln("\t".'<info>'.$existing_files.'</info> existing file'.($existing_files > 1 ? 's' : '').'.');
-            $output->writeln("\t".'<info>'.$overwritten_files.'</info> file'.($overwritten_files > 1 ? 's' : '').' to overwrite.');
-            $output->writeln("\t".'<info>'.$dirty_elements.'</info> "dirty" element'.($dirty_elements > 1 ? 's' : '').') '.($dirty_elements ? '<comment>(Source found, but no translation)</comment>.' : ''));
+            $output->writeln('    <info>'.$existing_files.'</info> existing file'.($existing_files > 1 ? 's' : '').'.');
+            $output->writeln('    <info>'.$overwritten_files.'</info> file'.($overwritten_files > 1 ? 's' : '').' to overwrite.');
+            $output->writeln('    <info>'.$dirty_elements.'</info> "dirty" element'.($dirty_elements > 1 ? 's' : '').' '.($dirty_elements ? '<comment>(Source found, but no translation)</comment>.' : ''));
         }
 
         // process catalogues
@@ -179,34 +204,16 @@ class Extractor
         $operation = new MergeOperation($emptyCatalogue, $catalogue);
 
         // save the files
-        if ($cli) {
-            $output->writeln('Processing extraction...');
+        if ($this->cli) {
+            $output->writeln(sprintf('Processing extraction in <info>%s</info>', $outputDirectory));
         }
 
-        $writer->writeTranslations($operation->getResult(), $outputFormat, array('path' => $outputDirectory));
+        $mergeOperationResult = $operation->getResult();
 
-        $cache_dirs = $this->cache_dir.'/../';
-
-        $env_dirs = glob($cache_dirs.'*');
-
-        if ($cli) {
-            $output->writeln('Clearing cache catalogues...');
+        if (method_exists($this->translation_writer, 'disableBackup')) {
+            $this->translation_writer->disableBackup();
         }
-        foreach ($env_dirs as $dir) {
-            if (is_dir($dir.'/translations')) {
-                $catalogues = glob($dir.'/translations/*');
-                foreach ($catalogues as $catalogue) {
-                    unlink($catalogue);
-                }
-            }
-        }
-
-        // Reset des paramètres pour permettre une autre utilisation de l'extracteur
-        $this->dir_checked = false;
-        $this->cli = false;
-        $this->cli_output = null;
-
-        return true;
+        $this->translation_writer->writeTranslations($mergeOperationResult, $outputFormat, array('path' => $outputDirectory));
     }
 
     /**

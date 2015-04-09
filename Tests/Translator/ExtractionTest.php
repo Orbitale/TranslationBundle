@@ -152,7 +152,6 @@ class ExtractionTest extends AbstractTestCase
         // This checks that the translation is saved and dirty
         $this->assertNull(array_key_exists('must_be_in_file', $messages) ? $messages['must_be_in_file'] : 'key that must be in file');
 
-
         // Test a wrong not supported format in order to check the exception
         $arrayInput = new ArrayInput(array(
             'locale' => 'fr',
@@ -175,7 +174,7 @@ class ExtractionTest extends AbstractTestCase
         }
         $this->assertGreaterThan(0, $commandOutput);
         $this->assertContains('Wrong output format', $output);
-        $this->assertContains('An unknown error has occurred, please check your configuration and datas.', $output);
+        $this->assertContains('An error has occurred, please check your configuration and datas.', $output);
 
     }
 
