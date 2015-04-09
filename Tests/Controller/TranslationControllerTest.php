@@ -69,7 +69,7 @@ class TranslationControllerTest extends AbstractTestCase
         $crawler = $client->request("GET", '/admin/translations/');
 
         $this->assertEquals(1, $crawler->filter('div.container .row')->count());
-        $this->assertEquals(2, $crawler->filter('div.container .row h3 + ul > li')->count());
+        $this->assertEquals(1, $crawler->filter('div.container .row h3 + ul > li')->count());
 
         $transLink = $crawler->filter('div.container .row h3 + ul > li a');
 

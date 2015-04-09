@@ -76,7 +76,7 @@ class ExtractionTest extends AbstractTestCase
     {
         $dummyDatas = $this->processDummyDatas();
 
-        $outputDirectory = $this->getKernel()->getContainer()->getParameter('kernel.root_dir').'/../../../vendor/_translations/';
+        $outputDirectory = $this->getKernel()->getContainer()->getParameter('kernel.root_dir').'/../../../build/translations/';
 
         // Clean the translation output
         foreach (glob($outputDirectory.'/*') as $file) {

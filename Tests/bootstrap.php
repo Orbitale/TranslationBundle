@@ -21,7 +21,7 @@ $autoload = require_once $file;
 
 AnnotationRegistry::registerFile(__DIR__.'/../vendor/doctrine/orm/lib/Doctrine/ORM/Mapping/Driver/DoctrineAnnotations.php');
 
-$dbFile = __DIR__.'/../vendor/orbitale_translation_test.db';
+$dbFile = __DIR__.'/../build/orbitale_translation_test.db';
 
 if (file_exists($dbFile)) {
     unlink($dbFile);
@@ -29,6 +29,9 @@ if (file_exists($dbFile)) {
 
 if (!is_dir(__DIR__.'/../build')) {
     mkdir(__DIR__.'/../build');
+}
+foreach (glob(__DIR__.'/../build/translations/*.yml') as $translationFile) {
+    unlink($translationFile);
 }
 
 include __DIR__.'/Fixtures/App/AppKernel.php';

@@ -65,7 +65,7 @@ class TranslatorTest extends AbstractTestCase
 
     public function testLangs()
     {
-        $this->assertEquals(array('fr' => 'French'), $this->translator->getLangs());
+        $this->assertEquals(array('fr' => 'French', 'en' => 'English'), $this->translator->getLangs());
     }
 
     /**
