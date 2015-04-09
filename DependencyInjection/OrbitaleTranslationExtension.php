@@ -41,8 +41,12 @@ class OrbitaleTranslationExtension extends Extension
             }
         }
 
-        if ($config['use_sonata']) {
+        if ('sonata' === $config['admin_backend']) {
             $loader->load('sonata_admin.yml');
+        }
+
+        if ('native' === $config['admin_backend']) {
+            $config['admin_layout'] = '@OrbitaleTranslation/Translation/_layout_easyadmin.html.twig';
         }
 
         foreach ($config as $key => $value) {

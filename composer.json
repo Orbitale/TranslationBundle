@@ -18,7 +18,8 @@
         "satooshi/php-coveralls": "~0.6"
     },
     "suggest": {
-        "sonata-project/admin-bundle": "Useful to add an Admin interface to manage your translations with SonataAdminBundle"
+        "sonata-project/admin-bundle": "Useful to add an Admin interface to manage your translations with SonataAdminBundle",
+        "javiereguiluz/easyadmin-bundle": "Useful to add a simple back-end interface to manage your translations with EasyAdminBundle"
     },
     "autoload": {
         "psr-4": {

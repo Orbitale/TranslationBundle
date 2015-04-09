@@ -18,6 +18,7 @@
                 //Bouton permettant de recopier le contenu initial de l'expression à traduire
                 var id = this.getAttribute('data-target-item'),
                     target_textarea = d.getElementById(id),
+                    message_replace_content = (typeof message_replace_content) !== 'undefined' ? message_replace_content : 'Confirm replace?',
                     source_id = this.getAttribute('data-source-id') ? this.getAttribute('data-source-id') : this.getAttribute('data-target-item'),
                     source_content = d.querySelector('[data-token="'+source_id.replace('translation_','')+'"]').innerHTML;
                 if (!target_textarea.value ||
@@ -89,12 +90,12 @@
         // Applies functions to all dedicated elements
         for (var i = 0; i < number_of_elements; i++) {
             if ($) {
-                list_validators[i].style.display = "inline-block";
+                list_validators[i].style.display = "block";
                 list_validators[i].onclick = func_update_translation;
             } else {
                 list_validators[i].style.display = 'none';
             }
-            list_copy_buttons[i].onclick = func_copy_initial_content
+            list_copy_buttons[i].onclick = func_copy_initial_content;
         }
 
     }

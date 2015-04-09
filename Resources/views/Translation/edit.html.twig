@@ -11,7 +11,7 @@
     <h1>{{ 'title.message_translations' | trans }}</h1>
 
     <div class="alert alert-info" id="always_save_indicator">
-        <a class="btn btn-sm alert-link btn-link" href="{{ url('orbitale_translation_adminlist') }}">&laquo; {{ 'back_to_translations_list' | trans }}</a>
+        <a class="btn alert-link btn-default" href="{{ url('orbitale_translation_adminlist') }}">&laquo; {{ 'back_to_translations_list' | trans }}</a>
         <a class="btn btn-default" href="{{ url('orbitale_translation_export', {"locale": locale}) }}">{{ 'export_translations_lang' | trans }}</a>
     </div>
 
@@ -58,8 +58,8 @@
                         <textarea data-modified="false" name="translation[{{ translation.token }}]" id="translation_{{ translation.token }}" class="form-control translation_text" placeholder="{{ 'translation_placeholder' | trans }}">{{ translation.translation | raw }}</textarea>
                     </div>
                     <div class="col-lg-2">
-                        <button class="btn btn-default btn-sm validate_translation" type="button" data-target-item="translation_{{ translation.token }}" style="display: none;">{{ 'save' | trans }}</button>
-                        <button class="btn btn-default btn-sm recopy_message" type="button" data-target-item="translation_{{ translation.token }}">{{ 'copy_original_message' | trans }}</button>
+                        <button class="btn btn-default btn-block validate_translation" type="button" data-target-item="translation_{{ translation.token }}" style="display: none;">{{ 'save' | trans }}</button>
+                        <button class="btn btn-default btn-block recopy_message" type="button" data-target-item="translation_{{ translation.token }}" style="margin-left: 0;  white-space: normal;">{{ 'copy_original_message' | trans }}</button>
                     </div>
                 </div>
                 <hr />

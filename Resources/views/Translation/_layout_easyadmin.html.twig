@@ -1,0 +1,34 @@
+{% extends '@EasyAdmin/layout.html.twig' %}
+
+{% block body_class 'admin ' %}
+
+{% block content %}
+    <div class="row">
+        <div id="content-header" class="col-sm-12">
+            {% block content_header %}
+                <div class="row">
+                    <div class="col-sm-6">
+                        <h1 class="title">
+                            {% block content_title %}
+                                {{ parent() }}
+                                {% block title %}{% endblock %}
+                            {% endblock %}
+                        </h1>
+                    </div>
+                </div>
+            {% endblock %}
+        </div>
+
+        <div id="main" class="col-sm-12">
+            {% block main %}
+                {{ parent() }}
+                {% block translation_admin_body %}{% endblock %}
+            {% endblock %}
+        </div>
+    </div>
+{% endblock %}
+
+{% block body_javascript %}
+    {{ parent() }}
+    {% block translation_javascripts %}{% endblock %}
+{% endblock %}

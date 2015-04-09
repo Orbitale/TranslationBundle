@@ -13,7 +13,7 @@
             {% endfor %}
         </div>
     {% endfor %}
-    <a class="btn btn-sm btn-link" href="{{ url('orbitale_translation_export') }}">{{ 'export_all' | trans }}</a>
+    <a class="btn btn-default" href="{{ url('orbitale_translation_export') }}">{{ 'export_all' | trans }}</a>
     <div class="row">
         {% for locale,catalogue in translations %}
             <div class="col-lg-3">
