@@ -63,6 +63,13 @@ class Translation
     protected $domain;
 
     /**
+     * @var array
+     *
+     * @ORM\Column(name="notes", type="array", nullable=true)
+     */
+    protected $notes;
+
+    /**
      * @var ArrayCollection
      */
     protected $translationsLike;
@@ -234,4 +241,25 @@ class Translation
     {
         return $this->translationsLike;
     }
+
+    /**
+     * @return array
+     */
+    public function getNotes()
+    {
+        return $this->notes;
+    }
+
+    /**
+     * @param array $notes
+     *
+     * @return Translation
+     */
+    public function setNotes($notes)
+    {
+        $this->notes = $notes;
+
+        return $this;
+    }
+
 }
