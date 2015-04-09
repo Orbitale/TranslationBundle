@@ -26,46 +26,46 @@ class Translation
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      */
-    private $id;
+    protected $id;
 
     /**
      * @var string
      * @ORM\Column(name="token",type="string",length=255,unique=true)
      */
-    private $token;
+    protected $token;
 
     /**
      * @var string
      *
      * @ORM\Column(name="source", type="text")
      */
-    private $source;
+    protected $source;
 
     /**
      * @var string
      *
      * @ORM\Column(name="translation", type="text", nullable=true)
      */
-    private $translation;
+    protected $translation;
 
     /**
      * @var string
      *
      * @ORM\Column(name="locale", type="string", length=10)
      */
-    private $locale;
+    protected $locale;
 
     /**
      * @var string
      *
      * @ORM\Column(name="domain", type="string", length=255)
      */
-    private $domain;
+    protected $domain;
 
     /**
      * @var ArrayCollection
      */
-    private $translationsLike;
+    protected $translationsLike;
 
     public function __toString()
     {
