@@ -1,4 +1,4 @@
-[![SensioLabsInsight](https://insight.sensiolabs.com/projects/79130396-6820-46ba-9412-5e3c29429845/small.png)](https://insight.sensiolabs.com/projects/79130396-6820-46ba-9412-5e3c29429845)
+[![SensioLabsInsight](https://insight.sensiolabs.com/projects/79130396-6820-46ba-9412-5e3c29429845/mini.png)](https://insight.sensiolabs.com/projects/79130396-6820-46ba-9412-5e3c29429845)
 [![Build Status](https://travis-ci.org/Orbitale/TranslationBundle.svg?branch=master)](https://travis-ci.org/Orbitale/TranslationBundle)
 [![Coverage Status](https://coveralls.io/repos/Orbitale/TranslationBundle/badge.svg?branch=master)](https://coveralls.io/r/Orbitale/TranslationBundle?branch=master)
 
@@ -8,6 +8,22 @@ Orbitale TranslationBundle
 Adds new features to native Symfony translator, without replacing it.
 
 Creates translation files, format filenames with the translation domains names, but with more powerful support of all translations.
+
+
+Index
+-------------------------
+
+* [Installation](#installation)
+* [Initialization](#initialization)
+* [Usage](#usage)
+* [Managing translations in the database](#managing-translations-in-the-database)
+  * [Native admin backend](#native)
+  * [SonataAdminBundle](#sonata)
+  * [EasyAdmin](#easyadmin)
+  * [Raw database use](#raw)
+* [Default configuration reference](#default-configuration-reference)
+  * [Locales](#locales)
+* [Dump the translations into files](#dump)
 
 Installation
 -------------------------
@@ -38,7 +54,7 @@ You need to initiate some settings to make sure the bundle is configured properl
         public function registerBundles() {
             $bundles = array(
                 // ...
-                new Orbitale\Bundle\TranslationBundle\OrbitaleTranslationBundle(),// Registers Orbitale TranslationBundle
+                new Orbitale\Bundle\TranslationBundle\OrbitaleTranslationBundle(),
     
     ```
 
@@ -72,76 +88,96 @@ But if the translator does not find any translation, then it will search in the 
 Managing translations in the database
 -------------------------
 
-You can manage translations in three different ways :
+You can manage translations in five different ways :
 
-1. **Using the Orbitale's `TranslationController`**
+1. <a name="native"></a> **Using the native Orbitale TranslationController**
+
+    You can, of course, choose another solution, but this one is the **best** because it offers a properly dedicated translation interface.
 
     You'll just load the internal controller by injecting our routes into your app, and get access to our translation manager. See "Admin Panel" first section for more informations.
+    For this you can inject our routing files into your own routing config :
     
-2. **Connecting to your `SonataAdminBundle` configuration**
-
-    You can add one single configuration value to inject the `TranslationAdmin` service to add a simple manager into your backoffice
+    ```yml
+    # app/config/routing.yml
+    orbitale_translation_front:
+        resource: "@OrbitaleTranslationBundle/Resources/config/routing_front.yml"
+        prefix:   /
     
-3. **Raw database management**
-
-    Well, this is the brutal method, but you can simply search in your database with any db-administration system, and modify translations manually. For sanity reasons, I let you write your SQL statements, or load PhpMyAdmin to modify the translations yourself ;) 
-
-
-Admin Panel
--------------------------
-
-## First solution : internal controller
-
-For this you can inject our routing files into your own routing config :
-
-```yml
-# app/config/routing.yml
-orbitale_translation_front:
-    resource: "@OrbitaleTranslationBundle/Resources/config/routing_front.yml"
-    prefix:   /
-
-orbitale_translation_admin:
-    resource: "@OrbitaleTranslationBundle/Resources/config/routing_admin.yml"
-    prefix:   /
+    orbitale_translation_admin:
+        resource: "@OrbitaleTranslationBundle/Resources/config/routing_admin.yml"
+        prefix:   /
+    ```
+    **Note :** I deliberately wrote the prefix : you should specify them, as your routes are totally different than any other routes. They are unique, yours, and they are dedicated to your app. These are your prefixes, enjoy them <3.
     
-```
+    Basically, the template is a classical Twitter's Bootstrap v3 and jQuery v2, all bundled in the bundle.
+    
+    There are four routes usable by the **OrbitaleTranslationBundle** controller :
+    
+    ##### Front
+    + **Locale change** :
+        `/%prefix%/lang/{locale}` , A simple route that allows the user to change the locale he's using. Obviously, if you have all routes beginning with the locale, for example `http://www.mysite.com/{locale}/action/param/...`, this route is unnecessary, but it's still here to help you getting rid of the many checks, as this bundle uses a special listener to check the locale for any request.
+    
+    ##### Admin
+    + **Admin panel index** :
+        `/%prefix%/translations/` , Shows a list of all elements found in the database, sorted by ***locale*** and ***translation domains***. A tiny count system allows you to directly have a view on how many elements are translated or not. To view directly the health state of the translations, the counts will use badges and have three different colors : red if no element is translated, orange if some elements are translated but not all, and green if all elements are translated.
+    
+    + **Admin panel edition** :
+        `/%prefix%/translations/{locale}/{domain}` , With a little Javascript, it can save your translations in the database. You can save the datas with an AJAX request and a little tooltip will appear showing you if the translation has succeded.
+    
+    + **Admin panel extraction** :
+        `/%prefix%/translations/export/{locale}` , *(Locale is optional)* This route allows the user to extract translations into files, in YML format, in a configurable output directory.
+         **Tip :** This feature is also available in command line.
+         **Warning!** This commands overwrite your actual translations if they're located in the `app/Resources/translations` directory ! This bundle cannot (yet ?) merge the existing files with the currently extracted translations.
+    
+2. <a name="sonata"></a> **Connecting to your [SonataAdminBundle](https://sonata-project.org/bundles/admin/master/doc/index.html) configuration**
 
-**Note :** I deliberately wrote the prefix : you should specify them, as your routes are totally different than any other routes. They are unique, yours, and they are dedicated to your app. These are your prefixes, enjoy them <3.
+    If you are using SonataAdminBundle in your Symfony app, then you can add the `TranslationAdmin` class by simply adding a configuration parameter:
 
-Basically, the template is a classical Twitter's Bootstrap v3 and jQuery v2, all bundled in the bundle.
+    ```yaml
+    # app/config/config.yml
+    orbitale_translation:
+        admin_backend: sonata
+    ```
 
-There are four routes usable by the **OrbitaleTranslationBundle** controller :
+3. <a name="easyadmin"></a> **Connecting to your [EasyAdmin](https://github.com/javiereguiluz/EasyAdminBundle) configuration**
 
-#### Front
-+ **Locale change** :
-    `/%prefix%/lang/{locale}` , A simple route that allows the user to change the locale he's using. Obviously, if you have all routes beginning with the locale, for example `http://www.mysite.com/{locale}/action/param/...`, this route is unnecessary, but it's still here to help you getting rid of the many checks, as this bundle uses a special listener to check the locale for any request.
+    1. First method: by using the native **TranslationController** AND adding this configuration:
+    
+        ```yaml
+        # app/config/config.yml
+        orbitale_translation:
+            admin_backend: easyadmin
+        ```
 
-#### Admin
-+ **Admin panel index** :
-    `/%prefix%/translations/` , Shows a list of all elements found in the database, sorted by ***locale*** and ***translation domains***. A tiny count system allows you to directly have a view on how many elements are translated or not. To view directly the health state of the translations, the counts will use badges and have three different colors : red if no element is translated, orange if some elements are translated but not all, and green if all elements are translated.
+        By going to the `/%prefix%/translations` page (like in the [native admin panel](#admin) ), you'll see that the controller will be wrapped inside EasyAdmin's layout,
+        avoiding you to override any controller!
 
-+ **Admin panel edition** :
-    `/%prefix%/translations/{locale}/{domain}` , With a little Javascript, it can save your translations in the database. You can save the datas with an AJAX request and a little tooltip will appear showing you if the translation has succeded.
+        For now, you cannot add a menu item in EasyAdmin for this interface (it will then be "invisible" unless you type the url in your browser).
+        But be sure that once EasyAdmin implements a solution for adding a menu item in the interface, you'll be warned ;) .
+    
+    2. Second method: by adding this configuration directly under the `easy_admin` parameter:
+    
+        ```yaml
+        # app/config/config.yml
+        easy_admin:
+            Translation:
+                group: "Blog"
+                class: Orbitale\Bundle\TranslationBundle\Entity\Translation
+                list:
+                    fields: [ id, source, translation, locale, domain, notes ]
+                form:
+                    fields: [ id, { property: source, type: text, help: "Do not modify this value or this translation becomes corrupted!" }, translation, locale, domain, notes ]
+        ```
+        
+        This will create a new "Translation" interface directly in EasyAdmin, where you'll be able to list/edit/create translations.
+    
+4. <a name="raw"></a> **Raw database management**
 
-+ **Admin panel extraction** :
-    `/%prefix%/translations/export/{locale}` , *(Locale is optional)* This route allows the user to extract translations into files, in YML format, in a configurable output directory.
-     **Tip :** This feature is also available in command line.
-     **Warning!** This commands overwrite your actual translations if they're located in the `app/Resources/translations` directory ! This bundle cannot (yet ?) merge the existing files with the currently extracted translations.
-
-## Second solution : SonataAdminBundle
-
-If you are using SonataAdminBundle in your Symfony app, then you can add the `TranslationAdmin` class by simply adding a configuration parameter :
-
-```yml
-# app/config/config.yml
-orbitale_translation:
-    use_sonata: true
-```
-
-The `OrbitaleTranslationExtension` class will then load a `SonataAdmin` service which adds a translation list, and allows you to edit your translations directly in your Sonata backoffice.
+    Well, this is the brutal method, but you can simply search in your database with any db-administration system, and modify translations manually.
+    For sanity reasons, I let you write your SQL statements, or load PhpMyAdmin to modify the translations yourself ;) 
 
 
-Configuration reference
+Default configuration reference
 -------------------------
 
 ```yaml
@@ -150,17 +186,19 @@ orbitale_translation:
     # By default, it will only use the %locale% parameter
     locales: ~ 
     
-    # Whether you want to use the Admin class with SonataAdminBundle
-    use_sonata: false 
+    # Which back-end you are using to manage your translations
+    # Available values are the following: native (or null), easyadmin, sonata
+    admin_backend: ~
     
     # This is the layout that will be extended by all internal administration views (list and edition)
+    # Note that this layout is overriden when using a back-end configuration different to "native"
     admin_layout: OrbitaleTranslationBundle:Translation:_layout.html.twig 
     
     # This is the directory where the extracted translations will be saved, when using the translation UI or the command-line-interface.
-    output_directory: %kernel.root_dir%/Resources/translations/
+    extractor_output_directory: %kernel.root_dir%/Resources/translations/
 ```
 
-##### Locales :
+##### Locales
 
 Example :
 
@@ -190,7 +228,7 @@ This is basically a way to use only 2 locales in your website. With the 3rd way,
 With the 2nd method, it's the shortest way. The languages will only be splitted into an array and the extension will find them 
 
 
-##### Dump the translations, extract them into files
+##### <a name="dump"></a> Dump the translations, extract them into files
 
 If you want to **extract the translations from the database to files**, you can do it in two ways :
 
@@ -212,7 +250,7 @@ When you use the native **Twig** filters ( `trans`, `transchoice`, `trans_defaul
 1. First, it will **search if the element exists in the Symfony's native translator**.
 If it does, then, it just returns it.
 
-2. Else, it will get the **translation domain** asked, if none, use **messages** (exactly like the native translator), and will load an internal catalogue, and **check if the source** *(also named "id" in the native translator)* **exists in the database** (it will create a specific token based on source, locale and domain, and check token's existence).
+2. Else, it will get the **translation domain** asked, if none, use `messages` (exactly like the native translator), and will load an internal catalogue, and **check if the source** *(also named "id" in the native translator)* **exists in the database** (it will create a specific token based on source, locale and domain, and check token's existence).
 
 3. If the token does not exist, then it will **persist a new element in the database, with an empty translation**. At this moment, it will be visible in the **translation UI (admin panel)**, and the count number will indicate a "missing" translation : x/y , where **x** equals the number of translated elements and **y** equals the total number of elements.
 
