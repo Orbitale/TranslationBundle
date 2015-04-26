@@ -47,7 +47,7 @@ class Translator extends BaseTranslator implements TranslatorInterface
     /**
      * @var Translation[]
      */
-    protected $translationsToPersist;
+    protected $translationsToPersist = array();
 
     /**
      * @var string
@@ -62,6 +62,14 @@ class Translator extends BaseTranslator implements TranslatorInterface
      * @var array
      */
     protected static $catalogue = array();
+
+    /**
+     * This array contains all Translation objects tokens that has been generated during the request
+     * The keys are the tokens, and the values are a boolean that determines whether the object is
+     * translated or not.
+     * @var array|boolean[]
+     */
+    protected static $requestedTokens = array();
 
     /**
      * Override the native message selector to be able to use it for `transchoice` method
@@ -165,6 +173,14 @@ class Translator extends BaseTranslator implements TranslatorInterface
     }
 
     /**
+     * @return array|boolean[]
+     */
+    public function getRequestedTokens()
+    {
+        return static::$requestedTokens;
+    }
+
+    /**
      * In case of, flush is launched anytime the object is destructed.
      * This allows flushing even when there is any kind of error, or when the listener is not triggered.
      */
@@ -201,7 +217,6 @@ class Translator extends BaseTranslator implements TranslatorInterface
      */
     public function trans($id, array $parameters = array(), $domain = null, $locale = null)
     {
-
         $translation = $this->getTranslation($id, $domain, $locale);
 
         return strtr($translation, $parameters);
@@ -271,11 +286,16 @@ class Translator extends BaseTranslator implements TranslatorInterface
 
             $token = md5($id.'_'.$domain.'_'.$locale);
 
+            if (!isset(static::$requestedTokens[$token])) {
+                static::$requestedTokens[$token] = false;
+            }
+
             /** @var Translation $translation */
             $translation = $this->findToken($token);
 
             if ($translation) {
                 if ($translation->getTranslation()) {
+                    static::$requestedTokens[$token] = true;
                     $translation = $translation->getTranslation();
                 } else {
                     $translation = $id;

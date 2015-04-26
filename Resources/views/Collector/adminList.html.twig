@@ -1,0 +1,50 @@
+
+{% for domain, items in translations %}
+    <h3>Translation domain: "{{ domain }}"</h3>
+    <form name="translate_update" id="translate_update" action="{{ url('orbitale_translation_edit_profiler', {'domain':domain,'locale':locale}) }}" method="post">
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 40%;">Original message</th>
+                    <th style="width: 40%;">Translation</th>
+                    <th style="width: 20%;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for translation in items %}
+            <tr>
+                <td style="width: 40%;">
+                    <label class="control-label" data-token="{{ translation.token }}" for="translation{{ translation.token }}">{{ translation.source }}</label>
+                    {% for translationLike in translation.translationsLike %}
+                        {% if loop.first %}
+                            <br />{{ 'translations_like_found' }} :<br />
+                        {% endif %}
+                        <small>{{ translationLike.source }} {{ translationLike.translation ? ' &#x25ba; ' : '' }} {{ translationLike.translation }}</small>
+                        {% if not loop.last %} &mdash; {% endif %}
+                    {% endfor %}
+                </td>
+                <td style="width: 40%;">
+                    <textarea data-modified="false" name="translation[{{ translation.token }}]" id="translation_{{ translation.token }}" class="form-control translation_text" placeholder="Translate your message here" style="width: 100%;min-height: 50px;">{{ translation.translation | raw }}</textarea>
+                </td>
+                <td style="width: 20%;">
+                    <button class="sf-button validate_translation" type="button" data-target-item="translation_{{ translation.token }}" style="display: none;">
+                        <span class="border-l"><span class="border-r"><span class="btn-bg">Save</span></span></span>
+                    </button>
+                    <button class="sf-button recopy_message" type="button" data-target-item="translation_{{ translation.token }}">
+                        <span class="border-l"><span class="border-r"><span class="btn-bg">Copy original message</span></span></span>
+                    </button>
+                </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </form>
+
+{% endfor %}
+
+<script type="application/javascript">
+    var message_replace_content = "Overwrite the actual content?";
+</script>
+<script type="text/javascript" src="{{ asset('bundles/orbitaletranslation/js/jquery-2.1.1.min.js') }}"></script>
+<script type="text/javascript" src="{{ asset('bundles/orbitaletranslation/js/bootstrap.min.js') }}"></script>
+<script type="text/javascript" src="{{ asset('bundles/orbitaletranslation/js/translation.js') }}"></script>

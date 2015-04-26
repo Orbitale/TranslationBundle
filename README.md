@@ -103,7 +103,7 @@ orbitale_translation_front:
 orbitale_translation_admin:
     resource: "@OrbitaleTranslationBundle/Resources/config/routing_admin.yml"
     prefix:   /
-    
+
 ```
 
 **Note :** I deliberately wrote the prefix : you should specify them, as your routes are totally different than any other routes. They are unique, yours, and they are dedicated to your app. These are your prefixes, enjoy them <3.
@@ -140,6 +140,30 @@ orbitale_translation:
 
 The `OrbitaleTranslationExtension` class will then load a `SonataAdmin` service which adds a translation list, and allows you to edit your translations directly in your Sonata backoffice.
 
+## Third solution : using the Symfony's WebToolbar and Profiler
+
+Just add this routing for your **dev** environment:
+
+```yml
+# app/config/routing_dev.yml
+orbitale_translation_profiler:
+    resource: "@OrbitaleTranslationBundle/Resources/config/routing_profiler.yml"
+```
+
+Make sure the web debug toolbar is enabled in `config_dev.yml`
+
+```yml
+# app/config/config_dev.yml
+web_profiler:
+    toolbar: true
+```
+
+And you'll see a little Orbitale icon in your web debug toolar as long as the Orbitale Translator has to translate a message from the database!
+
+If you click on this icon and go to the SymfonyProfiler panel, a new "Translations" tab will appear, allowing you to use the same behavior as the internal controller to save your translations.
+
+But the real advantage is that all translations you see in the profiler are the ones triggered only by the current request!
+This way, you REALLY know the translation context! 
 
 Configuration reference
 -------------------------
