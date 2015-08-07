@@ -1,6 +1,4 @@
-[![SensioLabsInsight](https://insight.sensiolabs.com/projects/79130396-6820-46ba-9412-5e3c29429845/small.png)](https://insight.sensiolabs.com/projects/79130396-6820-46ba-9412-5e3c29429845)
-[![Build Status](https://travis-ci.org/Orbitale/TranslationBundle.svg?branch=master)](https://travis-ci.org/Orbitale/TranslationBundle)
-[![Coverage Status](https://coveralls.io/repos/Orbitale/TranslationBundle/badge.svg?branch=master)](https://coveralls.io/r/Orbitale/TranslationBundle?branch=master)
+**Warning:** This bundle is abandoned. You should consider using a more supported and maintained bundle, like [lexik/LexikTranslationBundle](https://github.com/lexik/LexikTranslationBundle).
 
 Orbitale TranslationBundle
 ==================
