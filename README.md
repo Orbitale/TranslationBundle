@@ -1,4 +1,4 @@
-**Warning:** This bundle is abandoned. You should consider using a more supported and maintained bundle, like [lexik/LexikTranslationBundle](https://github.com/lexik/LexikTranslationBundle).
+:warning: **Warning:** This bundle is abandoned. You should consider using a more supported and maintained bundle, like [lexik/LexikTranslationBundle](https://github.com/lexik/LexikTranslationBundle).
 
 Orbitale TranslationBundle
 ==================
