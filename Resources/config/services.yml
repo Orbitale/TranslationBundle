@@ -43,3 +43,10 @@ services:
             - @orbitale_translator
         tags:
             - { name: twig.extension }
+
+    orbitale_translation.data_collector:
+        class: Orbitale\Bundle\TranslationBundle\DataCollector\TranslationDataCollector
+        arguments:
+            - @orbitale_translator
+        tags:
+            - { name: data_collector, template: "@OrbitaleTranslation/Collector/translation", id: orbitale_translation }

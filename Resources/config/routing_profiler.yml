@@ -1,0 +1,10 @@
+
+orbitale_profiler_translations:
+    path:      /_profiler/{token}/translations
+    defaults:
+        _controller: OrbitaleTranslationBundle:Translation:profiler
+
+orbitale_translation_edit_profiler:
+    path:      /_profiler/translations/{locale}/{domain}
+    defaults:
+        _controller: OrbitaleTranslationBundle:Translation:edit

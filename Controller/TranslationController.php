@@ -11,6 +11,7 @@
 namespace Orbitale\Bundle\TranslationBundle\Controller;
 
 use Doctrine\Common\Persistence\ObjectManager;
+use Orbitale\Bundle\TranslationBundle\DataCollector\TranslationDataCollector;
 use Orbitale\Bundle\TranslationBundle\Entity\Translation;
 use Orbitale\Bundle\TranslationBundle\Repository\TranslationRepository;
 use Orbitale\Bundle\TranslationBundle\Translation\Extractor;
@@ -116,6 +117,40 @@ class TranslationController extends Controller
             'locale' => $locale,
             'lang' => $lang,
             'domain' => $domain,
+        ));
+    }
+
+    public function profilerAction($token, Request $request)
+    {
+        $profiler = $this->container->get('profiler');
+
+        /** @var TranslationDataCollector $collector */
+        $collector = $profiler->loadProfile($token)->getCollector('orbitale_translation');
+
+        $locale = null;
+
+        /** @var TranslationRepository $transRepo */
+        $transRepo = $this->getDoctrine()->getRepository('OrbitaleTranslationBundle:Translation');
+
+        /** @var Translation[] $translations */
+        $translations = $transRepo->findByTokens($collector->getTokens());
+
+        $finalList = array();
+
+        foreach ($translations as $translation) {
+            if (null === $locale) {
+                $locale = $translation->getLocale();
+            }
+            if (!isset($finalList[$translation->getDomain()])) {
+                $finalList[$translation->getDomain()] = array();
+            }
+            $finalList[$translation->getDomain()][] = $translation;
+        }
+        ksort($finalList);
+
+        return $this->render('OrbitaleTranslationBundle:Collector:adminList.html.twig', array(
+            'translations' => $finalList,
+            'locale' => $locale,
         ));
     }
 
